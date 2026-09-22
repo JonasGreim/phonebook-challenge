@@ -5,6 +5,8 @@ import SearchIcon from '@mui/icons-material/Search';
 import {
   Alert,
   Box,
+  Button,
+  ButtonGroup,
   CircularProgress,
   Container,
   CssBaseline,
@@ -20,7 +22,14 @@ import {
   Typography,
 } from '@mui/material';
 import { searchContacts, type Contact } from './api.js';
+import { SearchError, type SearchErrorCode } from './api.js';
 import FindCallLogo from './FindCallLogo.js';
+import {
+  getInitialLocale,
+  LOCALE_STORAGE_KEY,
+  translations,
+  type Locale,
+} from './i18n.js';
 import { theme } from './theme.js';
 
 type SearchStatus =
@@ -28,24 +37,38 @@ type SearchStatus =
 
 const INITIAL_STATUS: SearchStatus = 'initial';
 
-function getErrorMessage(error: unknown): string {
-  return error instanceof Error
-    ? error.message
-    : 'Die Suche ist fehlgeschlagen.';
+function getSearchErrorCode(error: unknown): SearchErrorCode {
+  return error instanceof SearchError ? error.code : 'searchFailed';
 }
 
 export default function App() {
+  const [locale, setLocale] = useState<Locale>(getInitialLocale);
   const [input, setInput] = useState('');
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [status, setStatus] = useState<SearchStatus>(INITIAL_STATUS);
-  const [error, setError] = useState('');
+  const [errorCode, setErrorCode] = useState<SearchErrorCode | null>(null);
   const requestId = useRef(0);
+  const text = translations[locale];
+
+  useEffect(() => {
+    document.documentElement.lang = locale;
+    document.title = text.documentTitle;
+  }, [locale, text.documentTitle]);
 
   function handleInputChange(nextInput: string) {
     setInput(nextInput);
     setContacts([]);
-    setError('');
+    setErrorCode(null);
     setStatus(nextInput.trim() ? 'waiting' : INITIAL_STATUS);
+  }
+
+  function handleLocaleChange(nextLocale: Locale) {
+    setLocale(nextLocale);
+    try {
+      window.localStorage.setItem(LOCALE_STORAGE_KEY, nextLocale);
+    } catch {
+      // The chosen language remains active for this session when storage is unavailable.
+    }
   }
 
   useEffect(() => {
@@ -73,7 +96,7 @@ export default function App() {
           requestId.current === currentRequest
         ) {
           setContacts([]);
-          setError(getErrorMessage(requestError));
+          setErrorCode(getSearchErrorCode(requestError));
           setStatus('error');
         }
       }
@@ -85,14 +108,18 @@ export default function App() {
     };
   }, [input]);
 
-  const statusMessage = {
-    initial: 'Gib einen Namen ein, um das Telefonbuch zu durchsuchen.',
-    waiting: 'Suche wird vorbereitet.',
-    loading: 'Telefonbuch wird durchsucht.',
-    success: `${contacts.length} Treffer gefunden.`,
-    empty: 'Keine passenden Kontakte gefunden.',
-    error: '',
-  }[status];
+  const statusMessage =
+    status === 'initial'
+      ? text.initial
+      : status === 'waiting'
+        ? text.waiting
+        : status === 'loading'
+          ? text.loading
+          : status === 'success'
+            ? text.resultsCount(contacts.length)
+            : status === 'empty'
+              ? text.noResults
+              : '';
 
   return (
     <ThemeProvider theme={theme}>
@@ -115,7 +142,29 @@ export default function App() {
               minHeight: 72,
             }}
           >
-            <FindCallLogo />
+            <FindCallLogo homeLabel={text.homeLabel} />
+            <ButtonGroup
+              aria-label={text.languageLabel}
+              size="small"
+              variant="outlined"
+            >
+              <Button
+                aria-label={text.german}
+                aria-pressed={locale === 'de'}
+                onClick={() => handleLocaleChange('de')}
+                variant={locale === 'de' ? 'contained' : 'outlined'}
+              >
+                DE
+              </Button>
+              <Button
+                aria-label={text.english}
+                aria-pressed={locale === 'en'}
+                onClick={() => handleLocaleChange('en')}
+                variant={locale === 'en' ? 'contained' : 'outlined'}
+              >
+                EN
+              </Button>
+            </ButtonGroup>
           </Container>
         </Box>
         <Container maxWidth="sm" sx={{ py: { xs: 4, sm: 7 } }}>
@@ -128,11 +177,9 @@ export default function App() {
           >
             <Box component="header" sx={{ maxWidth: 480 }}>
               <Typography component="h1" variant="h1" gutterBottom>
-                Telefonnummer finden
+                {text.heading}
               </Typography>
-              <Typography color="text.secondary">
-                Namen suchen. Telefonnummer finden.
-              </Typography>
+              <Typography color="text.secondary">{text.slogan}</Typography>
             </Box>
 
             <Paper
@@ -144,8 +191,8 @@ export default function App() {
                 autoFocus
                 fullWidth
                 id="contact-search"
-                label="Name suchen"
-                helperText="Die Suche startet automatisch und berücksichtigt keine Groß- und Kleinschreibung."
+                label={text.searchLabel}
+                helperText={text.helperText}
                 onChange={(event) => handleInputChange(event.target.value)}
                 value={input}
                 slotProps={{
@@ -157,9 +204,9 @@ export default function App() {
                     ),
                     endAdornment: input ? (
                       <InputAdornment position="end">
-                        <Tooltip title="Suche leeren">
+                        <Tooltip title={text.clearSearch}>
                           <IconButton
-                            aria-label="Suche leeren"
+                            aria-label={text.clearSearch}
                             edge="end"
                             onClick={() => handleInputChange('')}
                           >
@@ -179,12 +226,14 @@ export default function App() {
               aria-live="polite"
             >
               {status === 'error' ? (
-                <Alert severity="error">{error}</Alert>
+                <Alert severity="error">
+                  {text.errors[errorCode ?? 'searchFailed']}
+                </Alert>
               ) : null}
               {status !== 'error' ? (
                 <Box sx={{ alignItems: 'center', display: 'flex', gap: 1 }}>
                   {status === 'loading' ? (
-                    <CircularProgress size={18} aria-label="Lädt" />
+                    <CircularProgress size={18} aria-label={text.loading} />
                   ) : null}
                   <Typography color="text.secondary">
                     {statusMessage}
@@ -196,7 +245,7 @@ export default function App() {
             {status === 'success' ? (
               <Paper
                 component="section"
-                aria-label="Suchergebnisse"
+                aria-label={text.results}
                 elevation={0}
               >
                 <Box
@@ -211,7 +260,7 @@ export default function App() {
                   }}
                 >
                   <Typography component="h2" variant="h2">
-                    Suchergebnisse
+                    {text.results}
                   </Typography>
                   <Typography color="text.secondary" variant="body2">
                     {contacts.length}

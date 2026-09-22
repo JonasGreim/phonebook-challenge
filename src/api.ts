@@ -10,6 +10,19 @@ const SEARCH_PHONEBOOK = `
   }
 `;
 
+export type SearchErrorCode =
+  'invalidResponse' | 'searchFailed' | 'serviceUnavailable';
+
+export class SearchError extends Error {
+  code: SearchErrorCode;
+
+  constructor(code: SearchErrorCode) {
+    super(code);
+    this.code = code;
+    this.name = 'SearchError';
+  }
+}
+
 export interface Contact {
   id: string;
   name: string;
@@ -55,24 +68,21 @@ export async function searchContacts(
   });
 
   if (!response.ok) {
-    throw new Error('Die Suche ist momentan nicht erreichbar.');
+    throw new SearchError('serviceUnavailable');
   }
 
   const result: unknown = await response.json();
   if (!isSearchResponse(result)) {
-    throw new Error('Die Suche hat eine ungültige Serverantwort erhalten.');
+    throw new SearchError('invalidResponse');
   }
 
   if (result.errors?.length) {
-    const message = result.errors[0]?.message;
-    throw new Error(
-      typeof message === 'string' ? message : 'Die Suche ist fehlgeschlagen.',
-    );
+    throw new SearchError('searchFailed');
   }
 
   const contacts = result.data?.searchPhonebook;
   if (!Array.isArray(contacts) || !contacts.every(isContact)) {
-    throw new Error('Die Suche hat eine ungültige Serverantwort erhalten.');
+    throw new SearchError('invalidResponse');
   }
 
   return contacts;

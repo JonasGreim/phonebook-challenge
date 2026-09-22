@@ -1,29 +1,30 @@
-# Current task: Step 2 - Automated quality checks
+# Current task: Step 3 - Internationalization
 
 ## Goal
 
-Create one local quality-check entry point and a GitHub Actions workflow that installs from
-the lockfile and runs the existing automated checks.
+Add a German/English interface with central translations, a visible language switch,
+persisted language selection, and an updated document language.
 
 ## Scope
 
-Package scripts, one GitHub Actions workflow, and related documentation. Internationalization,
-pagination, clipboard support, and the English README remain planned in
-[`ai/tasks/backlog/improvements.md`](../backlog/improvements.md).
+Central UI translations, translated API error feedback, language persistence, `lang` and
+title updates, targeted tests, and documentation. Pagination, clipboard support, and the
+English README remain planned in [`ai/tasks/backlog/improvements.md`](../backlog/improvements.md).
 
 ## Relevant context
 
-`package.json`, `package-lock.json`, `.nvmrc`, `.github/workflows/`, and `docs/`.
+`src/i18n.ts`, `src/App.tsx`, `src/api.ts`, `src/FindCallLogo.tsx`, tests, and `docs/`.
 
 ## Acceptance checks
 
-- One local command invokes configured typecheck, lint, format check, tests, and build.
-- The workflow uses `npm ci` with the committed lockfile and the Node version from `.nvmrc`.
-- Local checks pass. A GitHub Actions result is recorded only after a remote run occurs.
+- All UI strings, status messages, errors, tooltips, and accessible labels are translated
+  centrally.
+- The visible language switch preserves the active query and results, persists its choice,
+  and updates the document language.
+- Existing search behavior and data remain unchanged and the local check chain passes.
 
 ## Status and next step
 
-Implemented and locally verified: `npm ci --dry-run` validates the lockfile and `npm run
-check` passes typecheck, lint, format check, tests, and build. The GitHub Actions workflow
-has been added but has not run because no commit or push was created in this task. Record a
-remote CI result only after GitHub displays it. Stop here for user review before step 3.
+Implemented and locally verified: `npm run check` passes and now includes 10 tests. The
+language switch preserves active results, stores the choice in local storage, and updates
+the document language and title. Stop here for user review before step 4.

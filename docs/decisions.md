@@ -21,6 +21,13 @@ Der GitHub-Actions-Workflow nutzt `npm ci`, die Lockdatei und `.nvmrc`, bevor er
 Befehl ausführt. Ein lokaler Erfolg beweist nicht den Erfolg auf GitHub; erst ein nach dem
 Push sichtbarer Workflow-Lauf darf als CI-Ergebnis dokumentiert werden.
 
+## Internationalization without an additional dependency
+
+The application has one small, typed translation module because it currently supports only
+two static locales. It centralizes UI text and error codes while keeping search state outside
+the locale state. A dedicated i18n library would be appropriate for pluralization rules,
+many locales, or nested content, but would add unnecessary complexity now.
+
 ## Apollo Server und GraphQL
 
 Apollo Server erfüllt die gewünschte Client-Server-Architektur mit einem kleinen,

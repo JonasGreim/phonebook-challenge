@@ -21,8 +21,15 @@
 
 ## Umfangsgrenzen
 
-Keine Anmeldung, Bearbeitung, Datenbank, Suchindex oder Veröffentlichung. Pagination,
-Zweisprachigkeit und Kopieren von Telefonnummern sind geplant, aber noch nicht implementiert.
+Keine Anmeldung, Bearbeitung, Datenbank, Suchindex oder Veröffentlichung. Pagination und
+Kopieren von Telefonnummern sind geplant, aber noch nicht implementiert.
+
+## Sprache
+
+Die Oberfläche unterstützt Deutsch und Englisch. Die Sprachwahl ist sichtbar, wird lokal
+gespeichert und aktualisiert die Dokumentensprache. UI-Texte, Status-, Fehler- und
+Zugänglichkeitsmeldungen stammen aus einer zentralen Übersetzungsquelle. Markenname und
+Kontaktdaten bleiben unverändert; ein Sprachwechsel erhält die aktuelle Suche und Treffer.
 
 ## Technische Grundlage
 

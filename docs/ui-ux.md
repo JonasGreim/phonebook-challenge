@@ -21,10 +21,9 @@ Eine schmale, mittig ausgerichtete Inhaltsfläche setzt Überschrift, kurze Erkl
 das prominent beschriftete Suchfeld vor die Trefferliste. Auf kleinen Bildschirmen nutzt
 sie die gesamte verfügbare Breite, auf großen bleibt die Lesebreite begrenzt.
 
-Der kompakte Header enthält die Wortmarke und keine künstliche Navigation. Eine
-Sprachumschaltung ist im Ausgangsprojekt nicht vorhanden und wurde bewusst nicht als
-zweite Übersetzungslösung ergänzt. Die Suchanfrage kann über eine beschriftete
-Icon-Schaltfläche geleert werden.
+Der kompakte Header enthält die Wortmarke, eine sichtbare DE/EN-Sprachumschaltung und keine
+künstliche Navigation. Die Wahl wird gespeichert; beim Wechsel bleiben Suche und Treffer
+sichtbar. Die Suchanfrage kann über eine beschriftete Icon-Schaltfläche geleert werden.
 
 ## Zustände
 
@@ -46,3 +45,4 @@ ausstehende Ergebnisse ignoriert und der Startzustand wiederhergestellt.
 | Status per `aria-live` und sichtbarer Fokus von Material UI | Rückmeldung auch ohne Blick auf die Liste. | Rein visuelle Meldung wäre schlechter zugänglich. | Mit Screenreader noch manuell prüfen. |
 | Symbolische FindCall-Wortmarke mit Favicon | Marke ist im Header und Browser-Tab schnell erkennbar, ohne Marketingbereich. | Externes Bildmaterial wäre schwerer wartbar und lizenzabhängig. | Favicon im Produktions-Build vorhanden; Darstellung bei 16/32 px manuell prüfen. |
 | Dezente Liste statt Einzelkarten | Viele Treffer bleiben scanbar und brauchen wenig Platz. | Große Karten würden auf Mobilgeräten unnötig viel scrollen. | Manuell mit langen Einträgen und schmalem Viewport prüfen. |
+| Zentraler DE/EN-Schalter | Sprache und zugängliche Bezeichnungen wechseln konsistent, ohne den Suchkontext zu verlieren. | Getrennte Übersetzungen in Komponenten würden schneller auseinanderlaufen. | Automatisiert für Erhalt von Suche, Treffer, Fehler und `lang` geprüft. |

@@ -15,3 +15,6 @@
 - `npm run check` als gemeinsamen lokalen Einstiegspunkt für Typecheck, Lint,
   Formatprüfung, Tests und Build ergänzt.
 - GitHub-Actions-Workflow für lockfile-basierte Installation und dieselbe Check-Kette ergänzt.
+- Erfolgreichen GitHub-Actions-Lauf nach Commit und Push bestätigt.
+- Deutsche und englische UI mit zentralen Übersetzungen, gespeicherter Sprachwahl und
+  aktualisiertem Dokument-`lang` ergänzt.

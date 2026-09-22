@@ -24,6 +24,11 @@ und eine fortlaufende Anfrage-ID behandeln schnelle Eingaben zuverlässig.
 Servergrenze und die Prüfung der GraphQL-Antwort im Client behandeln Daten weiterhin als
 `unknown`, bis ihre Struktur nachgewiesen ist.
 
+`src/i18n.ts` ist die zentrale, typisierte Quelle für deutsche und englische UI-Texte sowie
+Suchfehler-Codes. `App` speichert die Sprachwahl unter `findcall-locale` in Local Storage und
+aktualisiert `document.documentElement.lang` und den Seitentitel. Der Sprachzustand ist von
+Suchanfrage und Treffern getrennt, sodass beides beim Wechsel erhalten bleibt.
+
 Die automatische Qualitätssicherung verwendet den einzelnen Befehl `npm run check`. Der
 Workflow `.github/workflows/quality.yml` installiert auf GitHub Actions mit `npm ci` aus
 `package-lock.json`, liest die Node-Version aus `.nvmrc` und führt anschließend denselben

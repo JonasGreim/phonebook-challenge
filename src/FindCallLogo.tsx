@@ -1,7 +1,7 @@
 import { Box } from '@mui/material';
 
 type MarkProps = { title?: string };
-type FindCallLogoProps = { compact?: boolean };
+type FindCallLogoProps = { compact?: boolean; homeLabel: string };
 
 function Mark({ title }: MarkProps) {
   return (
@@ -42,10 +42,13 @@ function Mark({ title }: MarkProps) {
   );
 }
 
-export default function FindCallLogo({ compact = false }: FindCallLogoProps) {
+export default function FindCallLogo({
+  compact = false,
+  homeLabel,
+}: FindCallLogoProps) {
   return (
     <Box
-      aria-label="FindCall – zur Startseite"
+      aria-label={homeLabel}
       component="a"
       href="/"
       sx={{

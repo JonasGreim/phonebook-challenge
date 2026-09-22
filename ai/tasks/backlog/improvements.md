@@ -1,10 +1,5 @@
 # Backlog: FindCall improvements
 
-## 3. Internationalization
-
-Add a visible German/English language switch, central translations including accessible
-messages, persisted language selection, and document language updates.
-
 ## 4. Pagination
 
 Search the complete phonebook, sort stably, then paginate with 10/25/50 entries per page;
