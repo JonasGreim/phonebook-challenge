@@ -36,6 +36,8 @@ untereinander mit ausreichendem Abstand angeordnet.
 - Start/leer: hilfreicher Hinweis, keine alte Trefferliste.
 - Warten/Laden: neutrale Statusmeldung; beim Laden zusätzlich ein Spinner.
 - Treffer: Gesamtbereich, Liste mit Name sowie Telefonnummer, Seitengröße und Navigation.
+- Kopieren: ein Icon-Button mit Tooltip und zugänglicher Bezeichnung pro Eintrag; eine kurze
+  Live-Rückmeldung meldet Erfolg oder einen verständlichen Fehler.
 - Keine Treffer: eindeutige, nicht-technische Meldung.
 - Fehler: hervorgehobene Fehlermeldung statt leerer Trefferliste.
 
@@ -51,5 +53,6 @@ ausstehende Ergebnisse ignoriert und der Startzustand wiederhergestellt.
 | Status per `aria-live` und sichtbarer Fokus von Material UI | Rückmeldung auch ohne Blick auf die Liste. | Rein visuelle Meldung wäre schlechter zugänglich. | Mit Screenreader noch manuell prüfen. |
 | Symbolische FindCall-Wortmarke mit Favicon | Marke ist im Header und Browser-Tab schnell erkennbar, ohne Marketingbereich. | Externes Bildmaterial wäre schwerer wartbar und lizenzabhängig. | Favicon im Produktions-Build vorhanden; Darstellung bei 16/32 px manuell prüfen. |
 | Dezente Liste statt Einzelkarten | Viele Treffer bleiben scanbar und brauchen wenig Platz. | Große Karten würden auf Mobilgeräten unnötig viel scrollen. | Manuell mit langen Einträgen und schmalem Viewport prüfen. |
-| Zentraler DE/EN-Schalter | Sprache und zugängliche Bezeichnungen wechseln konsistent, ohne den Suchkontext zu verlieren. | Getrennte Übersetzungen in Komponenten würden schneller auseinanderlaufen. | Automatisiert für Erhalt von Suche, Treffer, Fehler und `lang` geprüft. |
-| Serverseitige Pagination nach Gesamtsuche | Keine Treffer gehen an Seitengrenzen verloren; gleiche Namen bleiben durch die ID-Sortierung unterscheidbar. | Clientseitiges Nachladen oder Paging vor dem Filtern würde unvollständige beziehungsweise inkonsistente Treffer erzeugen. | Testfälle für vollständige ID-Menge, Seitenränder, Größen, Resets und alte Antworten vorhanden; Ausführung in dieser Umgebung offen. |
+| Zentraler DE/EN-Schalter | Sprache und zugängliche Bezeichnungen wechseln konsistent, ohne den Suchkontext zu verlieren. | Getrennte Übersetzungen in Komponenten würden schneller auseinanderlaufen. | Automatisiert geprüft; mobile und Tastaturbedienung vom User im Browser bestätigt. |
+| Serverseitige Pagination nach Gesamtsuche | Keine Treffer gehen an Seitengrenzen verloren; gleiche Namen bleiben durch die ID-Sortierung unterscheidbar. | Clientseitiges Nachladen oder Paging vor dem Filtern würde unvollständige beziehungsweise inkonsistente Treffer erzeugen. | Lokale Checks, Browserprüfung und GitHub Actions vom User bestätigt. |
+| Kopierbutton pro Kontakt | Die Telefonnummer kann schnell übernommen werden und bleibt bei Fehlern auswählbar. | Kopieren durch Markieren ist langsamer; ein Erfolg vor Abschluss wäre irreführend. | Automatisierte Clipboard-Tests vorhanden; echte Browser-Clipboard- und Tastaturprüfung offen. |

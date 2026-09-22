@@ -20,6 +20,10 @@ vi.mock('./api.js', async (importOriginal) => {
 });
 
 const mockedSearchContacts = vi.mocked(searchContacts);
+const originalClipboard = Object.getOwnPropertyDescriptor(
+  navigator,
+  'clipboard',
+);
 
 function createSearchPage(
   contacts: Contact[],
@@ -29,6 +33,13 @@ function createSearchPage(
   totalPages = Math.ceil(totalCount / pageSize),
 ) {
   return { contacts, page, pageSize, totalCount, totalPages };
+}
+
+function setClipboard(writeText: (text: string) => Promise<void>) {
+  Object.defineProperty(navigator, 'clipboard', {
+    configurable: true,
+    value: { writeText },
+  });
 }
 
 describe('App', () => {
@@ -41,6 +52,11 @@ describe('App', () => {
     cleanup();
     vi.useRealTimers();
     vi.resetAllMocks();
+    if (originalClipboard) {
+      Object.defineProperty(navigator, 'clipboard', originalClipboard);
+    } else {
+      Reflect.deleteProperty(navigator, 'clipboard');
+    }
   });
 
   it('wartet vor der Suche und zeigt Treffer nach der Serverantwort', async () => {
@@ -291,6 +307,138 @@ describe('App', () => {
     expect(screen.getByText('26–26 of 26 results')).toBeInTheDocument();
     expect(screen.getByRole('combobox')).toHaveTextContent('25');
     expect(mockedSearchContacts).toHaveBeenCalledTimes(3);
+  });
+
+  it('copies the unmodified number for the selected contact with a duplicate name', async () => {
+    const writeText = vi
+      .fn<(text: string) => Promise<void>>()
+      .mockResolvedValue();
+    setClipboard(writeText);
+    mockedSearchContacts.mockResolvedValueOnce(
+      createSearchPage([
+        { id: 'contact-1', name: 'Anna Muster', phone: '0101' },
+        { id: 'contact-2', name: 'Anna Muster', phone: '0202-03' },
+      ]),
+    );
+    render(<App />);
+
+    fireEvent.change(screen.getByLabelText('Name suchen'), {
+      target: { value: 'anna' },
+    });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(280);
+    });
+    await act(async () => {
+      fireEvent.click(
+        screen.getAllByRole('button', {
+          name: 'Telefonnummer von Anna Muster kopieren',
+        })[1],
+      );
+    });
+
+    expect(writeText).toHaveBeenCalledWith('0202-03');
+    expect(screen.getByText('Telefonnummer kopiert.')).toBeInTheDocument();
+  });
+
+  it('shows copy success only after clipboard writing succeeds', async () => {
+    let resolveWrite: () => void = () => {
+      throw new Error('Clipboard write was not initialized.');
+    };
+    const writeText = vi.fn<(text: string) => Promise<void>>(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveWrite = resolve;
+        }),
+    );
+    setClipboard(writeText);
+    mockedSearchContacts.mockResolvedValueOnce(
+      createSearchPage([
+        { id: 'contact-1', name: 'Anna Muster', phone: '0101' },
+      ]),
+    );
+    render(<App />);
+
+    fireEvent.change(screen.getByLabelText('Name suchen'), {
+      target: { value: 'anna' },
+    });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(280);
+    });
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: 'Telefonnummer von Anna Muster kopieren',
+      }),
+    );
+
+    expect(
+      screen.queryByText('Telefonnummer kopiert.'),
+    ).not.toBeInTheDocument();
+    await act(async () => {
+      resolveWrite();
+    });
+    expect(screen.getByText('Telefonnummer kopiert.')).toBeInTheDocument();
+  });
+
+  it('reports rejected clipboard access without hiding the phone number', async () => {
+    const writeText = vi
+      .fn<(text: string) => Promise<void>>()
+      .mockRejectedValue(new Error('Permission denied'));
+    setClipboard(writeText);
+    mockedSearchContacts.mockResolvedValueOnce(
+      createSearchPage([
+        { id: 'contact-1', name: 'Anna Muster', phone: '0101' },
+      ]),
+    );
+    render(<App />);
+
+    fireEvent.change(screen.getByLabelText('Name suchen'), {
+      target: { value: 'anna' },
+    });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(280);
+    });
+    await act(async () => {
+      fireEvent.click(
+        screen.getByRole('button', {
+          name: 'Telefonnummer von Anna Muster kopieren',
+        }),
+      );
+    });
+
+    expect(
+      screen.getByText(
+        'Die Telefonnummer konnte nicht kopiert werden. Du kannst sie weiterhin auswählen.',
+      ),
+    ).toBeInTheDocument();
+    expect(screen.getByText('0101')).toBeInTheDocument();
+  });
+
+  it('reports when the Clipboard API is unavailable', async () => {
+    Reflect.deleteProperty(navigator, 'clipboard');
+    mockedSearchContacts.mockResolvedValueOnce(
+      createSearchPage([
+        { id: 'contact-1', name: 'Anna Muster', phone: '0101' },
+      ]),
+    );
+    render(<App />);
+
+    fireEvent.change(screen.getByLabelText('Name suchen'), {
+      target: { value: 'anna' },
+    });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(280);
+    });
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: 'Telefonnummer von Anna Muster kopieren',
+      }),
+    );
+
+    expect(
+      screen.getByText(
+        'Kopieren ist in diesem Browser nicht verfügbar. Du kannst die Nummer weiterhin auswählen.',
+      ),
+    ).toBeInTheDocument();
   });
 
   it('translates error feedback after a language change', async () => {

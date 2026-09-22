@@ -25,8 +25,7 @@
 
 ## Umfangsgrenzen
 
-Keine Anmeldung, Bearbeitung, Datenbank, Suchindex oder Veröffentlichung. Das Kopieren von
-Telefonnummern ist geplant, aber noch nicht implementiert.
+Keine Anmeldung, Bearbeitung, Datenbank, Suchindex oder Veröffentlichung.
 
 ## Sprache
 
@@ -35,6 +34,13 @@ gespeichert und aktualisiert die Dokumentensprache. UI-Texte, Status-, Fehler- u
 Zugänglichkeitsmeldungen stammen aus einer zentralen Übersetzungsquelle. Markenname und
 Kontaktdaten bleiben unverändert; ein Sprachwechsel erhält Suche, Seitengröße, Seite und
 Treffer.
+
+## Telefonnummer kopieren
+
+Jeder sichtbare Kontakteintrag besitzt eine zugängliche Kopieraktion. Sie übergibt nur die
+unveränderte Telefonnummer an die Clipboard API. Eine Erfolgsmeldung folgt erst nach deren
+erfolgreichem Abschluss; fehlende oder abgelehnte Clipboard-Zugriffe werden verständlich
+gemeldet. Die sichtbare Telefonnummer bleibt für manuelle Auswahl erhalten.
 
 ## Technische Grundlage
 
@@ -50,4 +56,6 @@ Nummern, leere Suche, keine Treffer, Datenvalidierung sowie verspätete Antworte
 Leeren des Feldes werden durch Tests abgedeckt. Pagination-Tests prüfen die vollständige,
 eindeutige Kontakt-ID-Menge über alle Seiten, gleiche Namen, Seitengrößen, Grenzen,
 ungültige Parameter, Resets und alte Antworten. Die sichtbare Fehlerdarstellung sowie
-Mobil- und Tastaturbedienung sind noch manuell im Browser zu prüfen.
+Mobil- und Tastaturbedienung wurden vom User erfolgreich im Browser geprüft. Clipboard-Tests
+decken korrekte Zuordnung gleichnamiger Kontakte, verzögerten Erfolg sowie fehlende und
+abgelehnte Clipboard-Zugriffe ab; deren aktueller lokaler Lauf steht noch aus.

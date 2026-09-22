@@ -1,40 +1,31 @@
-# Current task: Step 4 - Pagination
+# Current task: Step 5 - Copy phone numbers
 
 ## Goal
 
-Search the complete phonebook on the server, sort matching contacts deterministically, and
-return one validated page at a time without losing independent contacts with the same name.
+Copy an individual displayed phone number through the browser Clipboard API without changing
+its formatting or conflating contacts that have the same name.
 
 ## Scope
 
-GraphQL page metadata, server-side search/sort/pagination, the 10/25/50 page-size control,
-responsive page navigation, translated range and accessible labels, targeted tests, and
-documentation. Clipboard support and the English README remain planned in
+An accessible copy action, translated success and failure feedback, Clipboard API handling,
+targeted tests, and documentation. The English README remains planned in
 [`ai/tasks/backlog/improvements.md`](../backlog/improvements.md).
 
 ## Relevant context
 
-`server/phonebook.ts`, `server/schema.ts`, `src/api.ts`, `src/App.tsx`, `src/i18n.ts`,
-tests, and `docs/`.
+`src/App.tsx`, `src/i18n.ts`, `src/App.test.tsx`, and `docs/`.
 
 ## Acceptance checks
 
-- A non-empty query searches the full validated phonebook, sorts by name then stable contact
-  ID, and returns only the requested valid page plus total metadata.
-- The UI defaults to 10 results, offers 10/25/50, shows a translated result range, resets to
-  page 1 for a query or page-size change, and retains the page on a language change.
-- Tests cover complete page traversal, same-name contacts, boundaries, invalid requests,
-  resets, stale responses, and language preservation.
+- Each contact offers a keyboard-accessible, translated copy button that writes its unmodified
+  phone string only after the Clipboard API is available.
+- Success appears only after `writeText` resolves; unavailable or rejected access produces a
+  translated error while leaving the number visible for manual selection.
+- Tests cover correct same-name contact selection, delayed success, rejected access, and a
+  missing Clipboard API.
 
 ## Status and next step
 
-Implemented. The user's pre-fix `npm run check` output confirms that typecheck, lint, and
-format checking passed, while two UI tests failed. Both failures were corrected in the test
-harness: Material UI's non-native select is now operated through its menu, and mocked one-off
-responses are reset between tests. A post-fix automated run could not be performed in this
-workspace because neither Node.js nor npm is installed (`npm: command not found`); its result
-remains unverified here.
-
-Step 3's committed implementation is documented as locally checked, but its documented
-manual browser checks (mobile layout and keyboard/accessibility inspection) remain open and
-are not represented as a completed manual verification.
+Implemented. Automated checks and real browser clipboard/keyboard verification have not run
+in this workspace because neither Node.js nor npm is installed (`npm: command not found`) and
+no browser runtime is available here.

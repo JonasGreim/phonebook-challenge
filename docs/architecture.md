@@ -33,6 +33,11 @@ aktualisiert `document.documentElement.lang` und den Seitentitel. Der Sprachzust
 Suchanfrage, Seitengröße, Seite und Treffern getrennt, sodass sie beim Wechsel erhalten
 bleiben.
 
+Die Kopieraktion bleibt vollständig im Client: Sie übergibt `contact.phone` unverändert an
+`navigator.clipboard.writeText`. Erst die aufgelöste Promise erzeugt eine Erfolgsmeldung;
+eine fehlende oder abgelehnte API erzeugt eine übersetzte Rückmeldung. Kontakte und
+Telefonnummern werden dafür nicht erneut an den Server gesendet.
+
 Die automatische Qualitätssicherung verwendet den einzelnen Befehl `npm run check`. Der
 Workflow `.github/workflows/quality.yml` installiert auf GitHub Actions mit `npm ci` aus
 `package-lock.json`, liest die Node-Version aus `.nvmrc` und führt anschließend denselben

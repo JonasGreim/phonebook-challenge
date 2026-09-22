@@ -48,3 +48,10 @@ The server filters the complete validated in-memory phonebook before sorting by 
 stable contact ID, then returns the requested page with total metadata. This makes page
 boundaries deterministic and keeps separate records with the same name. Paginating before
 filtering would omit valid matches; using a name as a key would collapse valid contacts.
+
+## Clipboard API with explicit completion feedback
+
+The client uses the built-in Clipboard API, so no dependency or server endpoint is needed.
+It copies the stored phone string directly, preserving leading zeroes and formatting. A success
+message is deferred until `writeText` resolves; unavailable or rejected access keeps the
+number visible and gives the user a translated explanation.

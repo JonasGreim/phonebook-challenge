@@ -7,6 +7,9 @@ export type TranslationKey =
 
 type Translations = {
   clearSearch: string;
+  clipboardUnavailable: string;
+  copyFailed: string;
+  copyPhoneNumber: (name: string) => string;
   documentTitle: string;
   english: string;
   german: string;
@@ -19,6 +22,7 @@ type Translations = {
   noResults: string;
   nextPage: string;
   page: (page: number) => string;
+  phoneCopied: string;
   previousPage: string;
   results: string;
   resultsCount: (count: number) => string;
@@ -33,6 +37,11 @@ type Translations = {
 export const translations: Record<Locale, Translations> = {
   de: {
     clearSearch: 'Suche leeren',
+    clipboardUnavailable:
+      'Kopieren ist in diesem Browser nicht verfügbar. Du kannst die Nummer weiterhin auswählen.',
+    copyFailed:
+      'Die Telefonnummer konnte nicht kopiert werden. Du kannst sie weiterhin auswählen.',
+    copyPhoneNumber: (name) => `Telefonnummer von ${name} kopieren`,
     documentTitle: 'FindCall – Telefonnummer finden',
     english: 'Englisch',
     german: 'Deutsch',
@@ -46,6 +55,7 @@ export const translations: Record<Locale, Translations> = {
     noResults: 'Keine passenden Kontakte gefunden.',
     nextPage: 'Nächste Seite',
     page: (page) => `Seite ${page}`,
+    phoneCopied: 'Telefonnummer kopiert.',
     previousPage: 'Vorherige Seite',
     results: 'Suchergebnisse',
     resultsCount: (count) => `${count} Treffer gefunden.`,
@@ -62,6 +72,11 @@ export const translations: Record<Locale, Translations> = {
   },
   en: {
     clearSearch: 'Clear search',
+    clipboardUnavailable:
+      'Copying is not available in this browser. You can still select the number.',
+    copyFailed:
+      'The phone number could not be copied. You can still select it.',
+    copyPhoneNumber: (name) => `Copy phone number for ${name}`,
     documentTitle: 'FindCall – Find a phone number',
     english: 'English',
     german: 'German',
@@ -74,6 +89,7 @@ export const translations: Record<Locale, Translations> = {
     noResults: 'No matching contacts found.',
     nextPage: 'Next page',
     page: (page) => `Page ${page}`,
+    phoneCopied: 'Phone number copied.',
     previousPage: 'Previous page',
     results: 'Search results',
     resultsCount: (count) => `${count} results found.`,

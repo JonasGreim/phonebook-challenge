@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
+import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
 import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined';
 import SearchIcon from '@mui/icons-material/Search';
 import {
@@ -43,6 +44,7 @@ import { theme } from './theme.js';
 
 type SearchStatus =
   'initial' | 'waiting' | 'loading' | 'success' | 'empty' | 'error';
+type ClipboardFeedback = 'success' | 'unavailable' | 'failed';
 
 const INITIAL_STATUS: SearchStatus = 'initial';
 type PageSize = 10 | 25 | 50;
@@ -60,6 +62,8 @@ export default function App() {
   const [searchPage, setSearchPage] = useState<SearchPage | null>(null);
   const [status, setStatus] = useState<SearchStatus>(INITIAL_STATUS);
   const [errorCode, setErrorCode] = useState<SearchErrorCode | null>(null);
+  const [clipboardFeedback, setClipboardFeedback] =
+    useState<ClipboardFeedback | null>(null);
   const requestId = useRef(0);
   const text = translations[locale];
 
@@ -67,6 +71,13 @@ export default function App() {
     document.documentElement.lang = locale;
     document.title = text.documentTitle;
   }, [locale, text.documentTitle]);
+
+  useEffect(() => {
+    if (!clipboardFeedback) return undefined;
+
+    const timer = window.setTimeout(() => setClipboardFeedback(null), 3000);
+    return () => window.clearTimeout(timer);
+  }, [clipboardFeedback]);
 
   function handleInputChange(nextInput: string) {
     setInput(nextInput);
@@ -97,6 +108,20 @@ export default function App() {
       window.localStorage.setItem(LOCALE_STORAGE_KEY, nextLocale);
     } catch {
       // The chosen language remains active for this session when storage is unavailable.
+    }
+  }
+
+  async function handleCopyPhoneNumber(phone: string) {
+    if (!navigator.clipboard?.writeText) {
+      setClipboardFeedback('unavailable');
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(phone);
+      setClipboardFeedback('success');
+    } catch {
+      setClipboardFeedback('failed');
     }
   }
 
@@ -273,6 +298,19 @@ export default function App() {
                   {text.errors[errorCode ?? 'searchFailed']}
                 </Alert>
               ) : null}
+              {clipboardFeedback ? (
+                <Alert
+                  severity={
+                    clipboardFeedback === 'success' ? 'success' : 'error'
+                  }
+                >
+                  {clipboardFeedback === 'success'
+                    ? text.phoneCopied
+                    : clipboardFeedback === 'unavailable'
+                      ? text.clipboardUnavailable
+                      : text.copyFailed}
+                </Alert>
+              ) : null}
               {status !== 'error' ? (
                 <Box sx={{ alignItems: 'center', display: 'flex', gap: 1 }}>
                   {status === 'loading' ? (
@@ -353,6 +391,17 @@ export default function App() {
                             },
                           }}
                         />
+                        <Tooltip title={text.copyPhoneNumber(contact.name)}>
+                          <IconButton
+                            aria-label={text.copyPhoneNumber(contact.name)}
+                            color="primary"
+                            onClick={() =>
+                              void handleCopyPhoneNumber(contact.phone)
+                            }
+                          >
+                            <ContentCopyOutlinedIcon />
+                          </IconButton>
+                        </Tooltip>
                       </ListItem>
                     ))}
                   </List>

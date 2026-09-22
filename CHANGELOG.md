@@ -21,3 +21,7 @@
 - Serverseitige Pagination nach vollständiger Suche mit stabiler Sortierung nach Name und
   Kontakt-ID, Gesamtmetadaten, 10/25/50-Auswahl und responsiver Seitennavigation ergänzt.
 - Paging-, Gleichnamigkeits-, Seitengrenzen-, Reset- und Race-Condition-Tests ergänzt.
+- Zugängliche Kopieraktion pro Kontakt mit zentral übersetzten Rückmeldungen für Erfolg,
+  abgelehnten Zugriff und fehlende Clipboard-API ergänzt.
+- Tests für unveränderte Nummern, gleichnamige Kontakte sowie Clipboard-Erfolg und -Fehler
+  ergänzt.
