@@ -1,61 +1,56 @@
-# Anforderungen
+# Requirements
 
-## Vorgaben
+## Product requirements
 
-- Namen werden während der Eingabe per Freitext durchsucht, ohne Beachtung der
-  Groß- und Kleinschreibung.
-- Treffer zeigen vollständigen Namen und Telefonnummer.
-- Die Oberfläche bleibt auf kleinen und großen Bildschirmen nutzbar.
-- `telefonbuch.json` ist die unveränderte, serverseitige Datenquelle.
-- Der Client fragt die Daten zur Laufzeit über GraphQL ab.
+- Names are searched as free text while typing, without case sensitivity.
+- Results show the complete name and phone number.
+- The interface remains usable on small and large screens.
+- `telefonbuch.json` is the unchanged server-side source of data.
+- The client queries data at runtime through GraphQL.
 
-## Vereinbarte Konkretisierung
+## Agreed behavior
 
-- Gesucht wird ab einem Zeichen als Teilstring im Feld `name`.
-- Die Anfrage wird vor der Suche getrimmt; leer bedeutet keine Suche und keine Treffer.
-- Telefonnummern werden nicht durchsucht und stets als unveränderte Zeichenkette angezeigt.
-- Akzente und Umschreibungen werden nicht angeglichen.
-- Der Server durchsucht zuerst alle passenden Kontakte, sortiert sie deterministisch nach
-  Name und bei gleichem Namen nach stabiler Kontakt-ID und paginiert erst danach.
-- Standardmäßig werden 10 Treffer pro Seite angezeigt; 10, 25 und 50 sind auswählbar.
-- Jede Antwort enthält Treffer, Seite, Seitengröße, Gesamtzahl und Gesamtseiten. Ungültige
-  Seiten- oder Seitengrößenparameter werden serverseitig abgewiesen.
-- Nach 280 ms ohne Eingabe startet die Anfrage. Abbruch und eine Anfrage-ID verhindern,
-  dass alte Antworten aktuellere Zustände überschreiben.
+- A one-character-or-longer substring in `name` is searchable.
+- Input is trimmed before searching; empty input means no search and no results.
+- Phone numbers are not searched and are always displayed as their original strings.
+- Accents and transliterations are not normalized.
+- The server searches every matching contact first, sorts deterministically by name and then
+  stable contact ID, and paginates afterward.
+- The default is 10 results per page; 10, 25, and 50 are available.
+- Each response returns contacts, page, page size, total count, and total pages. Invalid page or
+  page-size parameters are rejected by the server.
+- A request starts after 280 ms without input. Abortion and a request ID prevent older responses
+  from replacing newer state.
 
-## Umfangsgrenzen
+## Internationalization
 
-Keine Anmeldung, Bearbeitung, Datenbank, Suchindex oder Veröffentlichung.
+The interface supports German and English. The visible choice is stored locally and changes the
+document language. UI text, statuses, errors, tooltips, and accessible labels come from a central
+translation source. Brand name and contact data remain unchanged; switching language preserves
+the query, page size, page, and results.
 
-## Sprache
+## Copying phone numbers
 
-Die Oberfläche unterstützt Deutsch und Englisch. Die Sprachwahl ist sichtbar, wird lokal
-gespeichert und aktualisiert die Dokumentensprache. UI-Texte, Status-, Fehler- und
-Zugänglichkeitsmeldungen stammen aus einer zentralen Übersetzungsquelle. Markenname und
-Kontaktdaten bleiben unverändert; ein Sprachwechsel erhält Suche, Seitengröße, Seite und
-Treffer.
+Every visible contact has an accessible copy action. It sends only the original phone-number
+string to the Clipboard API. A success message follows only after completion; unavailable or
+rejected Clipboard access produces a clear message. The visible phone number remains available
+for manual selection.
 
-## Telefonnummer kopieren
+## Technical baseline and scope limits
 
-Jeder sichtbare Kontakteintrag besitzt eine zugängliche Kopieraktion. Sie übergibt nur die
-unveränderte Telefonnummer an die Clipboard API. Eine Erfolgsmeldung folgt erst nach deren
-erfolgreichem Abschluss; fehlende oder abgelehnte Clipboard-Zugriffe werden verständlich
-gemeldet. Die sichtbare Telefonnummer bleibt für manuelle Auswahl erhalten.
+Client, server, and relevant tests use strict TypeScript. JSON data continues to receive runtime
+validation; types do not replace it. ESLint checks TypeScript/React code, while Prettier formats
+only source and configuration, never the immutable `telefonbuch.json` source.
 
-## Technische Grundlage
+There is no sign-in, editing, database, search index, or deployment in scope.
 
-Frontend, Server und relevante Tests verwenden striktes TypeScript. Die JSON-Daten werden
-weiterhin zur Laufzeit validiert; Typen ersetzen diese Prüfung nicht. ESLint prüft den
-TypeScript-/React-Code, Prettier formatiert nur Quellcode und Konfiguration - nicht die
-unveränderte Quelldatei `telefonbuch.json`.
+## Verification coverage
 
-## Abnahmekriterien
+Automated tests cover substrings, case, whitespace, duplicate names with distinct numbers, empty
+search, no matches, data validation, late responses, clearing input, pagination traversal and
+boundaries, invalid parameters, resets, and stale responses. They also cover Clipboard contact
+selection, delayed success, rejected access, and a missing Clipboard API.
 
-Teilstrings, Groß-/Kleinschreibung, Leerzeichen, doppelte Namen mit verschiedenen
-Nummern, leere Suche, keine Treffer, Datenvalidierung sowie verspätete Antworten und
-Leeren des Feldes werden durch Tests abgedeckt. Pagination-Tests prüfen die vollständige,
-eindeutige Kontakt-ID-Menge über alle Seiten, gleiche Namen, Seitengrößen, Grenzen,
-ungültige Parameter, Resets und alte Antworten. Die sichtbare Fehlerdarstellung sowie
-Mobil- und Tastaturbedienung wurden vom User erfolgreich im Browser geprüft. Clipboard-Tests
-decken korrekte Zuordnung gleichnamiger Kontakte, verzögerten Erfolg sowie fehlende und
-abgelehnte Clipboard-Zugriffe ab; deren aktueller lokaler Lauf steht noch aus.
+The user confirmed successful automated checks, browser verification, and GitHub Actions for
+step 4. For step 5, the user confirmed a successful local `npm run check` with 21 tests and a
+successful GitHub Actions run. A real browser copy and keyboard test is still open.

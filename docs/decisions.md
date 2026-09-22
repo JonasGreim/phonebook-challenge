@@ -1,57 +1,52 @@
-# Technische Entscheidungen
+# Technical decisions
 
-## React, Vite und TypeScript
+## React, Vite, and TypeScript
 
-Vite liefert einen kleinen, aktuellen React-Startpunkt. Striktes TypeScript beschreibt
-Kontakte, GraphQL-Argumente, UI-Zustände und API-Antworten explizit. Das reduziert Fehler
-an Client-Server-Grenzen, ersetzt aber nicht die Laufzeitvalidierung von JSON oder HTTP-
-Antworten. JavaScript wäre konfigurationsärmer, deckt diese Fehlerklasse jedoch später ab.
+Vite provides a small modern React entry point. Strict TypeScript describes contacts, GraphQL
+arguments, UI state, and API responses explicitly. It reduces client/server boundary errors but
+does not replace runtime validation of JSON or HTTP responses.
 
-## ESLint und Prettier
+## ESLint and Prettier
 
-ESLint verwendet die Flat Config mit den vorhandenen React- und TypeScript-Plugins.
-Prettier ist ausschließlich für Formatierung zuständig; `eslint-config-prettier` verhindert
-widersprüchliche Formatierungsregeln. Die Formatierungsbefehle listen nur Quellcode und
-Konfiguration explizit auf, damit die bereitgestellte Datenquelle unverändert bleibt.
+ESLint uses the flat configuration and existing React and TypeScript plugins. Prettier owns code
+formatting; `eslint-config-prettier` prevents conflicting formatting rules. Formatting commands
+list source and configuration explicitly so the supplied data source stays unchanged.
 
-## Lokale Checks und GitHub Actions
+## Local checks and GitHub Actions
 
-`npm run check` bündelt die vorhandenen Prüfungen, statt deren Konfiguration zu duplizieren.
-Der GitHub-Actions-Workflow nutzt `npm ci`, die Lockdatei und `.nvmrc`, bevor er genau diesen
-Befehl ausführt. Ein lokaler Erfolg beweist nicht den Erfolg auf GitHub; erst ein nach dem
-Push sichtbarer Workflow-Lauf darf als CI-Ergebnis dokumentiert werden.
+`npm run check` composes the existing checks rather than duplicating their configuration. The
+GitHub Actions workflow uses `npm ci`, the lockfile, and `.nvmrc` before running that command. A
+local success does not prove remote CI; only a visible post-push workflow may be recorded as CI.
 
-## Internationalization without an additional dependency
+## Internationalization without another dependency
 
-The application has one small, typed translation module because it currently supports only
-two static locales. It centralizes UI text and error codes while keeping search state outside
-the locale state. A dedicated i18n library would be appropriate for pluralization rules,
-many locales, or nested content, but would add unnecessary complexity now.
+One small typed translation module is sufficient for the current two static locales. It
+centralizes UI text and error codes while leaving search state outside locale state. A dedicated
+i18n library becomes appropriate for pluralization rules, many locales, or nested content.
 
-## Apollo Server und GraphQL
+## Apollo Server and GraphQL
 
-Apollo Server erfüllt die gewünschte Client-Server-Architektur mit einem kleinen,
-selbstdokumentierenden Schema. Eine REST-Route wäre für diese eine Suche einfacher,
-würde die bevorzugte GraphQL-Technologie jedoch nicht zeigen.
+Apollo Server meets the desired client/server architecture with a small self-documenting schema.
+A REST route would be simpler for one search, but would not demonstrate the requested GraphQL
+technology.
 
-## Datenhaltung im Speicher
+## In-memory data
 
-Nach erfolgreicher Startvalidierung liegen 120 Kontakte im Arbeitsspeicher. Eine Datenbank
-oder ein Index wären mehr Infrastruktur ohne praktischen Nutzen; bei veränderlichen oder
-großen Daten wären sie neu zu bewerten.
-
-UI/UX-Entscheidungen sind in [ui-ux.md](ui-ux.md) dokumentiert.
+After successful startup validation, the 120 contacts reside in memory. A database or index would
+add infrastructure without practical benefit here; reconsider both for mutable or large data.
 
 ## Pagination after complete server-side search
 
-The server filters the complete validated in-memory phonebook before sorting by name and
-stable contact ID, then returns the requested page with total metadata. This makes page
-boundaries deterministic and keeps separate records with the same name. Paginating before
-filtering would omit valid matches; using a name as a key would collapse valid contacts.
+The server filters the complete validated in-memory phonebook before sorting by name and stable
+contact ID, then returns the requested page with total metadata. This makes page boundaries
+deterministic and preserves separate records with identical names. Paginating before filtering
+would omit valid matches; using a name as a key would collapse valid contacts.
 
 ## Clipboard API with explicit completion feedback
 
-The client uses the built-in Clipboard API, so no dependency or server endpoint is needed.
-It copies the stored phone string directly, preserving leading zeroes and formatting. A success
-message is deferred until `writeText` resolves; unavailable or rejected access keeps the
-number visible and gives the user a translated explanation.
+The client uses the built-in Clipboard API, so no dependency or server endpoint is needed. It
+copies the stored phone string directly, preserving leading zeroes and formatting. A success
+message is deferred until `writeText` resolves; unavailable or rejected access keeps the number
+visible and gives the user a translated explanation.
+
+UI/UX decisions are documented in [ui-ux.md](ui-ux.md).

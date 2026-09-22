@@ -1,27 +1,25 @@
-# Änderungsprotokoll
+# Changelog
 
-## Noch nicht veröffentlicht
+## Unreleased
 
-- React-Frontend mit Material UI und GraphQL-Anbindung angelegt.
-- Apollo Server mit validiertem, speicherbasiertem Telefonbuch und Teilstring-Suche angelegt.
-- Anforderungen, Architektur, UI/UX- und Entscheidungsdokumentation ergänzt.
-- Node.js 22.22.2 als reproduzierbare Laufzeitvorgabe in `.nvmrc` festgelegt; Lockfile erstellt.
-- Acht Tests für Server-Suchlogik sowie Debounce- und Race-Condition-Verhalten des Clients ergänzt.
-- FindCall-Branding mit zentralem Material-UI-Theme, responsivem SVG-Logo und Favicon ergänzt.
-- Suchbereich und Trefferliste mit klareren Zuständen, Löschaktion und Telefon-Icons überarbeitet.
-- Frontend, Server und relevante Tests auf striktes TypeScript migriert; JSON- und
-  Antwortvalidierung zur Laufzeit beibehalten.
-- TypeScript, ESLint und Prettier mit zugehörigen Prüfskripten konfiguriert.
-- `npm run check` als gemeinsamen lokalen Einstiegspunkt für Typecheck, Lint,
-  Formatprüfung, Tests und Build ergänzt.
-- GitHub-Actions-Workflow für lockfile-basierte Installation und dieselbe Check-Kette ergänzt.
-- Erfolgreichen GitHub-Actions-Lauf nach Commit und Push bestätigt.
-- Deutsche und englische UI mit zentralen Übersetzungen, gespeicherter Sprachwahl und
-  aktualisiertem Dokument-`lang` ergänzt.
-- Serverseitige Pagination nach vollständiger Suche mit stabiler Sortierung nach Name und
-  Kontakt-ID, Gesamtmetadaten, 10/25/50-Auswahl und responsiver Seitennavigation ergänzt.
-- Paging-, Gleichnamigkeits-, Seitengrenzen-, Reset- und Race-Condition-Tests ergänzt.
-- Zugängliche Kopieraktion pro Kontakt mit zentral übersetzten Rückmeldungen für Erfolg,
-  abgelehnten Zugriff und fehlende Clipboard-API ergänzt.
-- Tests für unveränderte Nummern, gleichnamige Kontakte sowie Clipboard-Erfolg und -Fehler
-  ergänzt.
+- Created the React and Material UI client with a GraphQL integration.
+- Created the Apollo Server with a validated in-memory phonebook and substring search.
+- Added requirements, architecture, UI/UX, and technical decision documentation.
+- Added Node.js 22.22.2 in `.nvmrc` and committed a lockfile for reproducible installs.
+- Added server-search and client debounce/race-condition tests.
+- Added FindCall branding with a central Material UI theme, responsive SVG logo, and favicon.
+- Improved the search area and result list with clearer states, a clear action, and phone icons.
+- Migrated the client, server, and relevant tests to strict TypeScript while retaining runtime
+  JSON and response validation.
+- Configured TypeScript-aware ESLint and Prettier.
+- Added `npm run check` for typecheck, lint, format checking, tests, and build.
+- Added a GitHub Actions workflow that installs from the lockfile and runs the same check chain.
+- Added a German/English UI with central translations, persisted language selection, and document
+  `lang` updates.
+- Added server-side pagination after complete search, stable name/ID sorting, total metadata,
+  10/25/50 page sizes, and responsive navigation.
+- Added tests for pagination, duplicate names, page boundaries, resets, and stale responses.
+- Added an accessible copy action per contact, with translated success, rejected-access, and
+  unavailable-Clipboard feedback.
+- Added tests for unmodified numbers, duplicate-name contact selection, and Clipboard outcomes.
+- Rewrote project-maintained documentation in English and documented the final review scope.

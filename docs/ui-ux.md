@@ -1,58 +1,54 @@
-# Bedienkonzept und UI/UX
+# UI/UX design
 
-## FindCall-Branding
+## FindCall branding
 
-FindCall verwendet Dunkelblau (`#0B2D5B`) für Identität, Überschriften und Haupttext
-sowie Blau (`#2563EB`) für interaktive Elemente und den Telefonhörer im Logo. Das helle
-Seitenblau (`#F3F6FA`) trennt die weiße Inhaltsfläche ruhig vom Hintergrund; Rahmen sind
-`#DCE4EE`. Das Grün wird ausschließlich als Icon-Fläche verwendet, der kontrastreichere
-Erfolgston des Themes für Status verwendet. Alle Werte, Typografie, Rundungen, Fokus- und
-Komponentenvarianten liegen in `src/theme.ts`.
+FindCall uses dark blue (`#0B2D5B`) for identity, headings, and primary text, and blue
+(`#2563EB`) for interactive elements and the logo's phone handset. Pale page blue (`#F3F6FA`)
+separates the white content surface from the background; borders use `#DCE4EE`. Green is limited
+to the icon surface, while the theme's higher-contrast success tone is used for status. Values,
+typography, radii, focus treatment, and component variants live in `src/theme.ts`.
 
-Die Schriftfolge ist `Inter` mit robusten System-Fallbacks. Inter wird nicht nachgeladen,
-da kein lokales Font-Asset vorliegt; die Oberfläche bleibt daher ohne externe Anfrage
-lesbar. Das selbst erstellte SVG kombiniert eine dunkelblaue Lupe mit einem blauen Hörer.
-Die Wortmarke ist auf kleinen Bildschirmen ausgeblendet; das Symbol bleibt über den
-umgebenden Link zugänglich. Das vereinfachte Symbol ist außerdem als Favicon eingebunden.
+The type stack is Inter with robust system fallbacks. Inter is not downloaded because no local
+font asset exists, so the UI stays readable without an external request. The custom SVG combines
+a dark-blue magnifier and blue handset. The wordmark hides on small screens while its surrounding
+link remains accessible; the simplified mark is also the favicon.
 
-## Aufbau
+## Layout
 
-Eine schmale, mittig ausgerichtete Inhaltsfläche setzt Überschrift, kurze Erklärung und
-das prominent beschriftete Suchfeld vor die Trefferliste. Auf kleinen Bildschirmen nutzt
-sie die gesamte verfügbare Breite, auf großen bleibt die Lesebreite begrenzt.
+A narrow centered content area places the heading, short explanation, and prominently labelled
+search field before the results. It uses available width on small screens and preserves a readable
+line length on larger ones.
 
-Der kompakte Header enthält die Wortmarke, eine sichtbare DE/EN-Sprachumschaltung und keine
-künstliche Navigation. Die Wahl wird gespeichert; beim Wechsel bleiben Suche, Seitengröße,
-Seite und Treffer sichtbar. Die Suchanfrage kann über eine beschriftete Icon-Schaltfläche
-geleert werden.
+The compact header contains the wordmark and a visible DE/EN language switch, without invented
+navigation. The selection persists; query, page size, page, and results remain on language
+change. A labelled icon button clears the query.
 
-Treffer werden in einer kompakten Liste mit einem übersetzten Bereich wie „1–10 von 34
-Treffern“ gezeigt. Darunter stehen eine Seitengrößenauswahl (10, 25 oder 50) und eine
-Tastatur-bedienbare Seitennavigation. Auf schmalen Ansichten werden beide Elemente
-untereinander mit ausreichendem Abstand angeordnet.
+Results use a compact list with a translated range such as “1–10 of 34 results”. Below it are a
+10/25/50 page-size selector and keyboard-accessible pagination. On narrow views, those controls
+stack with adequate spacing. Each contact also has a copy icon button with a tooltip and
+accessible label.
 
-## Zustände
+## States
 
-- Start/leer: hilfreicher Hinweis, keine alte Trefferliste.
-- Warten/Laden: neutrale Statusmeldung; beim Laden zusätzlich ein Spinner.
-- Treffer: Gesamtbereich, Liste mit Name sowie Telefonnummer, Seitengröße und Navigation.
-- Kopieren: ein Icon-Button mit Tooltip und zugänglicher Bezeichnung pro Eintrag; eine kurze
-  Live-Rückmeldung meldet Erfolg oder einen verständlichen Fehler.
-- Keine Treffer: eindeutige, nicht-technische Meldung.
-- Fehler: hervorgehobene Fehlermeldung statt leerer Trefferliste.
+- Initial/empty: a helpful prompt with no stale list.
+- Waiting/loading: neutral status; loading additionally shows a spinner.
+- Results: range, contact list, page size, and navigation.
+- Copying: a short live-region message reports success or a clear failure; numbers remain visible.
+- No results: an unambiguous non-technical message.
+- Error: a highlighted error instead of an empty result list.
 
-Beim Ändern einer Suche bleibt keine veraltete Liste sichtbar. Beim Leeren werden
-ausstehende Ergebnisse ignoriert und der Startzustand wiederhergestellt.
+Changing a query immediately hides stale results. Clearing the field ignores pending answers and
+returns to the initial state.
 
-## Entscheidungen
+## Decisions
 
-| Entscheidung | Nutzen | Alternative und Nachteil | Überprüfung |
+| Decision | Benefit | Alternative and drawback | Verification |
 | --- | --- | --- | --- |
-| 280-ms-Debounce | Reagiert zügig und vermeidet Anfragen für jeden Tastendruck. | Sofortige Anfrage erzeugt unnötige Serverlast. | Manuell bei schneller Eingabe prüfen. |
-| Textfeld mit sichtbarem Label und Hilfetext | Zweck und Suchregeln sind ohne Vorwissen klar. | Nur ein Platzhalter verschwindet beim Tippen. | Tastatur- und Screenreader-Test offen. |
-| Status per `aria-live` und sichtbarer Fokus von Material UI | Rückmeldung auch ohne Blick auf die Liste. | Rein visuelle Meldung wäre schlechter zugänglich. | Mit Screenreader noch manuell prüfen. |
-| Symbolische FindCall-Wortmarke mit Favicon | Marke ist im Header und Browser-Tab schnell erkennbar, ohne Marketingbereich. | Externes Bildmaterial wäre schwerer wartbar und lizenzabhängig. | Favicon im Produktions-Build vorhanden; Darstellung bei 16/32 px manuell prüfen. |
-| Dezente Liste statt Einzelkarten | Viele Treffer bleiben scanbar und brauchen wenig Platz. | Große Karten würden auf Mobilgeräten unnötig viel scrollen. | Manuell mit langen Einträgen und schmalem Viewport prüfen. |
-| Zentraler DE/EN-Schalter | Sprache und zugängliche Bezeichnungen wechseln konsistent, ohne den Suchkontext zu verlieren. | Getrennte Übersetzungen in Komponenten würden schneller auseinanderlaufen. | Automatisiert geprüft; mobile und Tastaturbedienung vom User im Browser bestätigt. |
-| Serverseitige Pagination nach Gesamtsuche | Keine Treffer gehen an Seitengrenzen verloren; gleiche Namen bleiben durch die ID-Sortierung unterscheidbar. | Clientseitiges Nachladen oder Paging vor dem Filtern würde unvollständige beziehungsweise inkonsistente Treffer erzeugen. | Lokale Checks, Browserprüfung und GitHub Actions vom User bestätigt. |
-| Kopierbutton pro Kontakt | Die Telefonnummer kann schnell übernommen werden und bleibt bei Fehlern auswählbar. | Kopieren durch Markieren ist langsamer; ein Erfolg vor Abschluss wäre irreführend. | Automatisierte Clipboard-Tests vorhanden; echte Browser-Clipboard- und Tastaturprüfung offen. |
+| 280 ms debounce | Responsive input without a request for every keystroke. | Immediate requests create unnecessary server load. | Covered by automated behavior tests. |
+| Visible field label and helper text | The search purpose and rules remain clear while typing. | A placeholder alone disappears during input. | Browser keyboard and accessibility behavior confirmed by the user for step 4. |
+| `aria-live` status and Material UI focus treatment | Feedback is available without watching the list. | Purely visual feedback is less accessible. | Screen-reader-specific verification remains open. |
+| Symbolic FindCall wordmark and favicon | The brand is recognizable without a marketing panel. | External imagery would be harder to maintain and license. | Production build includes favicon; 16/32 px display remains a visual review item. |
+| Compact list rather than cards | Many results remain scannable and need less mobile scrolling. | Large cards consume unnecessary space. | Browser layout was confirmed by the user for step 4. |
+| Central DE/EN switch | Language and accessible labels change consistently without losing context. | Per-component translations drift more easily. | Automated checks and browser verification confirmed by the user. |
+| Server-side pagination after complete search | No match is lost at a page boundary; ID sorting distinguishes equal names. | Filtering only a pre-paged subset gives incomplete results. | Local checks, browser verification, and GitHub Actions confirmed by the user. |
+| Copy button per contact | A number can be transferred quickly and remains selectable after a failure. | Manual selection is slower; early success feedback is misleading. | Automated coverage and CI confirmed by the user; real Clipboard and keyboard testing remains open. |

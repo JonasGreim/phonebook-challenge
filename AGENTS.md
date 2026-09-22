@@ -3,7 +3,7 @@
 ## Scope and language
 
 - Keep `telefonbuch.json` unchanged and never expose contact data in logs or documentation.
-- Write code, code comments, and the README in English. Keep UI strings ready for the planned German/English interface; use the existing language architecture when it is introduced and do not create a competing translation mechanism.
+- Write code, code comments, and all project-maintained documentation in English. Keep the UI German/English through the existing language architecture; do not create a competing translation mechanism. Explanations to the user may be German.
 - Preserve working search behavior, GraphQL integration, stable contact IDs, and handling of duplicate names unless a task explicitly changes them.
 
 ## Working method
