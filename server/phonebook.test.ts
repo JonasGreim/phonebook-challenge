@@ -1,8 +1,13 @@
-import { describe, expect, it } from 'vitest';
 import path from 'node:path';
-import { loadPhonebook, normalizeQuery, searchPhonebook } from './phonebook.js';
+import { describe, expect, it } from 'vitest';
+import {
+  loadPhonebook,
+  normalizeQuery,
+  searchPhonebook,
+  type Contact,
+} from './phonebook.js';
 
-const syntheticContacts = [
+const syntheticContacts: Contact[] = [
   { id: 'contact-0', name: 'Anna Muster', phone: '0123' },
   { id: 'contact-1', name: 'Annabelle Beispiel', phone: '0456' },
   { id: 'contact-2', name: 'Anna Muster', phone: '0789' },
@@ -14,14 +19,20 @@ describe('Telefonbuchdaten', () => {
     const contacts = await loadPhonebook(path.resolve('telefonbuch.json'));
 
     expect(contacts).toHaveLength(120);
-    expect(contacts.every((contact) => /^contact-\d+$/.test(contact.id))).toBe(true);
-    expect(contacts.every((contact) => contact.phone.startsWith('0'))).toBe(true);
+    expect(contacts.every((contact) => /^contact-\d+$/.test(contact.id))).toBe(
+      true,
+    );
+    expect(contacts.every((contact) => contact.phone.startsWith('0'))).toBe(
+      true,
+    );
   });
 });
 
 describe('Suche', () => {
   it('findet Teilstrings ohne Beachtung der Groß- und Kleinschreibung', () => {
-    expect(searchPhonebook(syntheticContacts, 'NNA')).toEqual(syntheticContacts.slice(0, 3));
+    expect(searchPhonebook(syntheticContacts, 'NNA')).toEqual(
+      syntheticContacts.slice(0, 3),
+    );
   });
 
   it('entfernt äußere Leerzeichen und bewahrt gleiche Namen als getrennte Treffer', () => {
@@ -37,10 +48,14 @@ describe('Suche', () => {
 
   it('gleicht Umlaute nicht mit Umschreibungen gleich', () => {
     expect(searchPhonebook(syntheticContacts, 'mueller')).toEqual([]);
-    expect(searchPhonebook(syntheticContacts, 'müller')).toEqual([syntheticContacts[3]]);
+    expect(searchPhonebook(syntheticContacts, 'müller')).toEqual([
+      syntheticContacts[3],
+    ]);
   });
 
   it('begrenzt überlange Anfragen', () => {
-    expect(() => normalizeQuery('a'.repeat(101))).toThrow('höchstens 100 Zeichen');
+    expect(() => normalizeQuery('a'.repeat(101))).toThrow(
+      'höchstens 100 Zeichen',
+    );
   });
 });

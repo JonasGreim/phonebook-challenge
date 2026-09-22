@@ -1,10 +1,18 @@
 # Technische Entscheidungen
 
-## React, Vite und JavaScript
+## React, Vite und TypeScript
 
-Vite liefert einen kleinen, aktuellen React-Startpunkt; JavaScript hält die Aufgabe für
-den vorgesehenen Umfang gut lesbar. TypeScript wäre sinnvoll bei wachsendem Datenmodell,
-bringt hier aber zusätzlichen Erklär- und Konfigurationsaufwand.
+Vite liefert einen kleinen, aktuellen React-Startpunkt. Striktes TypeScript beschreibt
+Kontakte, GraphQL-Argumente, UI-Zustände und API-Antworten explizit. Das reduziert Fehler
+an Client-Server-Grenzen, ersetzt aber nicht die Laufzeitvalidierung von JSON oder HTTP-
+Antworten. JavaScript wäre konfigurationsärmer, deckt diese Fehlerklasse jedoch später ab.
+
+## ESLint und Prettier
+
+ESLint verwendet die Flat Config mit den vorhandenen React- und TypeScript-Plugins.
+Prettier ist ausschließlich für Formatierung zuständig; `eslint-config-prettier` verhindert
+widersprüchliche Formatierungsregeln. Die Formatierungsbefehle listen nur Quellcode und
+Konfiguration explizit auf, damit die bereitgestellte Datenquelle unverändert bleibt.
 
 ## Apollo Server und GraphQL
 

@@ -1,31 +1,30 @@
-# Aktuelle Aufgabe: Telefonbuch-Suche implementieren
+# Current task: Step 1 - TypeScript foundation
 
-## Ziel
+## Goal
 
-Eine lokal startbare React- und GraphQL-Anwendung auf Basis der unveränderten
-`telefonbuch.json` bereitstellen.
+Migrate the existing frontend, backend, and relevant tests to strict TypeScript while
+preserving runtime validation, branding, behavior, and original phonebook data.
 
-## Umfang
+## Scope
 
-Serverseitige Datenvalidierung und Suche, React-Oberfläche mit asynchronen Zuständen,
-FindCall-Branding, Dokumentation und gezielte Tests.
+TypeScript configuration, TypeScript source migration, ESLint, Prettier, and documentation
+updates. CI, internationalization, pagination, clipboard support, and the English README
+remain planned in [`ai/tasks/backlog/improvements.md`](../backlog/improvements.md).
 
-## Relevanter Kontext
+## Relevant context
 
-`telefonbuch.json`, `server/`, `src/`, `docs/` und `README.md`.
+`telefonbuch.json`, `server/`, `src/`, `package.json`, TypeScript configuration, and `docs/`.
 
-## Abnahmekriterien und Prüfungen
+## Acceptance checks
 
-- Suchlogik, Datenvalidierung, Leerwerte, doppelte Namen und Umlautverhalten: `npm test`
-- Frontend-Bundle: `npm run build`
-- Vollständiger Datenfluss und Bedienbarkeit: manuell im Browser
+- Strict TypeScript passes without unsafe `any` or error-hiding assertions: `npm run typecheck`
+- ESLint and Prettier are configured for the actual TypeScript/React project.
+- Existing behavior and runtime data validation remain covered: `npm test` and `npm run build`.
 
-## Stand und nächster Schritt
+## Status and next step
 
-FindCall-Theme, responsiver Header, eigenes SVG-Logo/Favicon, Suchbereich und Trefferliste
-sind umgesetzt. Installation mit Node 22.22.2, acht automatisierte Tests und der
-Produktions-Build sind erfolgreich geprüft. Eine Browser-Automation war in dieser Umgebung
-nicht verfügbar; responsive Darstellung, Tastaturbedienung, Screenreader-Ausgabe,
-Favicon bei 16/32 px und sichtbarer Fehlerzustand sind vor Veröffentlichung manuell zu
-prüfen. Eine Sprachumschaltung und Kopierfunktion existierten nicht und wurden bewusst
-nicht ergänzt.
+Implemented and locally verified: strict TypeScript migration, runtime validation,
+TypeScript-aware ESLint, Prettier, and the related npm commands. `npm run typecheck`,
+`npm run lint`, `npm run format:check`, `npm test`, and `npm run build` passed locally.
+The original `telefonbuch.json` is unchanged. Step 2 starts only after user review of this
+completed step; no GitHub Actions workflow has been created yet.

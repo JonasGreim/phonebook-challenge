@@ -21,7 +21,15 @@
 
 ## Umfangsgrenzen
 
-Keine Anmeldung, Bearbeitung, Datenbank, Pagination, Suchindex oder Veröffentlichung.
+Keine Anmeldung, Bearbeitung, Datenbank, Suchindex oder Veröffentlichung. Pagination,
+Zweisprachigkeit und Kopieren von Telefonnummern sind geplant, aber noch nicht implementiert.
+
+## Technische Grundlage
+
+Frontend, Server und relevante Tests verwenden striktes TypeScript. Die JSON-Daten werden
+weiterhin zur Laufzeit validiert; Typen ersetzen diese Prüfung nicht. ESLint prüft den
+TypeScript-/React-Code, Prettier formatiert nur Quellcode und Konfiguration - nicht die
+unveränderte Quelldatei `telefonbuch.json`.
 
 ## Abnahmekriterien
 
