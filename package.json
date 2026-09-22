@@ -16,6 +16,7 @@
     "lint": "eslint .",
     "format": "prettier --write \"src/**/*.{ts,tsx}\" \"server/**/*.ts\" package.json tsconfig.json tsconfig.app.json tsconfig.server.json vite.config.ts eslint.config.js .prettierrc.json",
     "format:check": "prettier --check \"src/**/*.{ts,tsx}\" \"server/**/*.ts\" package.json tsconfig.json tsconfig.app.json tsconfig.server.json vite.config.ts eslint.config.js .prettierrc.json",
+    "check": "npm run typecheck && npm run lint && npm run format:check && npm test && npm run build",
     "build": "vite build",
     "test": "vitest run"
   },

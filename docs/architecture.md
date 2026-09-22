@@ -23,3 +23,9 @@ und eine fortlaufende Anfrage-ID behandeln schnelle Eingaben zuverlässig.
 `strict: true`; das Root-`tsconfig.json` verbindet beide Projekte. Die laufzeitvalidierte
 Servergrenze und die Prüfung der GraphQL-Antwort im Client behandeln Daten weiterhin als
 `unknown`, bis ihre Struktur nachgewiesen ist.
+
+Die automatische Qualitätssicherung verwendet den einzelnen Befehl `npm run check`. Der
+Workflow `.github/workflows/quality.yml` installiert auf GitHub Actions mit `npm ci` aus
+`package-lock.json`, liest die Node-Version aus `.nvmrc` und führt anschließend denselben
+Befehl aus. Lokale Ergebnisse und der Status eines entfernten Workflow-Laufs werden bewusst
+getrennt dokumentiert.

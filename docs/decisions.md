@@ -14,6 +14,13 @@ Prettier ist ausschließlich für Formatierung zuständig; `eslint-config-pretti
 widersprüchliche Formatierungsregeln. Die Formatierungsbefehle listen nur Quellcode und
 Konfiguration explizit auf, damit die bereitgestellte Datenquelle unverändert bleibt.
 
+## Lokale Checks und GitHub Actions
+
+`npm run check` bündelt die vorhandenen Prüfungen, statt deren Konfiguration zu duplizieren.
+Der GitHub-Actions-Workflow nutzt `npm ci`, die Lockdatei und `.nvmrc`, bevor er genau diesen
+Befehl ausführt. Ein lokaler Erfolg beweist nicht den Erfolg auf GitHub; erst ein nach dem
+Push sichtbarer Workflow-Lauf darf als CI-Ergebnis dokumentiert werden.
+
 ## Apollo Server und GraphQL
 
 Apollo Server erfüllt die gewünschte Client-Server-Architektur mit einem kleinen,

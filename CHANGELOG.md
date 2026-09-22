@@ -12,3 +12,6 @@
 - Frontend, Server und relevante Tests auf striktes TypeScript migriert; JSON- und
   Antwortvalidierung zur Laufzeit beibehalten.
 - TypeScript, ESLint und Prettier mit zugehörigen Prüfskripten konfiguriert.
+- `npm run check` als gemeinsamen lokalen Einstiegspunkt für Typecheck, Lint,
+  Formatprüfung, Tests und Build ergänzt.
+- GitHub-Actions-Workflow für lockfile-basierte Installation und dieselbe Check-Kette ergänzt.

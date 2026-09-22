@@ -1,30 +1,29 @@
-# Current task: Step 1 - TypeScript foundation
+# Current task: Step 2 - Automated quality checks
 
 ## Goal
 
-Migrate the existing frontend, backend, and relevant tests to strict TypeScript while
-preserving runtime validation, branding, behavior, and original phonebook data.
+Create one local quality-check entry point and a GitHub Actions workflow that installs from
+the lockfile and runs the existing automated checks.
 
 ## Scope
 
-TypeScript configuration, TypeScript source migration, ESLint, Prettier, and documentation
-updates. CI, internationalization, pagination, clipboard support, and the English README
-remain planned in [`ai/tasks/backlog/improvements.md`](../backlog/improvements.md).
+Package scripts, one GitHub Actions workflow, and related documentation. Internationalization,
+pagination, clipboard support, and the English README remain planned in
+[`ai/tasks/backlog/improvements.md`](../backlog/improvements.md).
 
 ## Relevant context
 
-`telefonbuch.json`, `server/`, `src/`, `package.json`, TypeScript configuration, and `docs/`.
+`package.json`, `package-lock.json`, `.nvmrc`, `.github/workflows/`, and `docs/`.
 
 ## Acceptance checks
 
-- Strict TypeScript passes without unsafe `any` or error-hiding assertions: `npm run typecheck`
-- ESLint and Prettier are configured for the actual TypeScript/React project.
-- Existing behavior and runtime data validation remain covered: `npm test` and `npm run build`.
+- One local command invokes configured typecheck, lint, format check, tests, and build.
+- The workflow uses `npm ci` with the committed lockfile and the Node version from `.nvmrc`.
+- Local checks pass. A GitHub Actions result is recorded only after a remote run occurs.
 
 ## Status and next step
 
-Implemented and locally verified: strict TypeScript migration, runtime validation,
-TypeScript-aware ESLint, Prettier, and the related npm commands. `npm run typecheck`,
-`npm run lint`, `npm run format:check`, `npm test`, and `npm run build` passed locally.
-The original `telefonbuch.json` is unchanged. Step 2 starts only after user review of this
-completed step; no GitHub Actions workflow has been created yet.
+Implemented and locally verified: `npm ci --dry-run` validates the lockfile and `npm run
+check` passes typecheck, lint, format check, tests, and build. The GitHub Actions workflow
+has been added but has not run because no commit or push was created in this task. Record a
+remote CI result only after GitHub displays it. Stop here for user review before step 3.

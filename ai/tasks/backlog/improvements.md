@@ -1,10 +1,5 @@
 # Backlog: FindCall improvements
 
-## 2. Automated quality checks
-
-Unify check commands, add a GitHub Actions workflow using the lockfile, and distinguish
-local results from successful remote workflow runs.
-
 ## 3. Internationalization
 
 Add a visible German/English language switch, central translations including accessible
