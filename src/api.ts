@@ -1,11 +1,17 @@
 const endpoint = import.meta.env.VITE_GRAPHQL_URL || 'http://localhost:4000/';
 
 const SEARCH_PHONEBOOK = `
-  query SearchPhonebook($query: String!) {
-    searchPhonebook(query: $query) {
-      id
-      name
-      phone
+  query SearchPhonebook($query: String!, $page: Int!, $pageSize: Int!) {
+    searchPhonebook(query: $query, page: $page, pageSize: $pageSize) {
+      contacts {
+        id
+        name
+        phone
+      }
+      page
+      pageSize
+      totalCount
+      totalPages
     }
   }
 `;
@@ -27,6 +33,14 @@ export interface Contact {
   id: string;
   name: string;
   phone: string;
+}
+
+export interface SearchPage {
+  contacts: Contact[];
+  page: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages: number;
 }
 
 type GraphQLErrorResponse = { message?: unknown };
@@ -53,17 +67,35 @@ function isSearchResponse(value: unknown): value is SearchResponse {
   return isRecord(value);
 }
 
+function isSearchPage(value: unknown): value is SearchPage {
+  return (
+    isRecord(value) &&
+    Array.isArray(value.contacts) &&
+    value.contacts.every(isContact) &&
+    typeof value.page === 'number' &&
+    Number.isInteger(value.page) &&
+    typeof value.pageSize === 'number' &&
+    Number.isInteger(value.pageSize) &&
+    typeof value.totalCount === 'number' &&
+    Number.isInteger(value.totalCount) &&
+    typeof value.totalPages === 'number' &&
+    Number.isInteger(value.totalPages)
+  );
+}
+
 export async function searchContacts(
   query: string,
+  page: number,
+  pageSize: number,
   signal: AbortSignal,
-): Promise<Contact[]> {
+): Promise<SearchPage> {
   const response = await fetch(endpoint, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     signal,
     body: JSON.stringify({
       query: SEARCH_PHONEBOOK,
-      variables: { query },
+      variables: { page, pageSize, query },
     }),
   });
 
@@ -80,10 +112,10 @@ export async function searchContacts(
     throw new SearchError('searchFailed');
   }
 
-  const contacts = result.data?.searchPhonebook;
-  if (!Array.isArray(contacts) || !contacts.every(isContact)) {
+  const searchPage = result.data?.searchPhonebook;
+  if (!isSearchPage(searchPage)) {
     throw new SearchError('invalidResponse');
   }
 
-  return contacts;
+  return searchPage;
 }

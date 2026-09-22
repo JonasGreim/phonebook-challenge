@@ -41,3 +41,10 @@ oder ein Index wären mehr Infrastruktur ohne praktischen Nutzen; bei veränderl
 großen Daten wären sie neu zu bewerten.
 
 UI/UX-Entscheidungen sind in [ui-ux.md](ui-ux.md) dokumentiert.
+
+## Pagination after complete server-side search
+
+The server filters the complete validated in-memory phonebook before sorting by name and
+stable contact ID, then returns the requested page with total metadata. This makes page
+boundaries deterministic and keeps separate records with the same name. Paginating before
+filtering would omit valid matches; using a name as a key would collapse valid contacts.

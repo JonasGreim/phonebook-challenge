@@ -10,19 +10,28 @@ import {
   CircularProgress,
   Container,
   CssBaseline,
+  FormControl,
   IconButton,
+  InputLabel,
   InputAdornment,
   List,
   ListItem,
   ListItemText,
+  MenuItem,
+  Pagination,
   Paper,
+  Select,
   TextField,
   ThemeProvider,
   Tooltip,
   Typography,
 } from '@mui/material';
-import { searchContacts, type Contact } from './api.js';
-import { SearchError, type SearchErrorCode } from './api.js';
+import {
+  SearchError,
+  searchContacts,
+  type SearchErrorCode,
+  type SearchPage,
+} from './api.js';
 import FindCallLogo from './FindCallLogo.js';
 import {
   getInitialLocale,
@@ -36,6 +45,8 @@ type SearchStatus =
   'initial' | 'waiting' | 'loading' | 'success' | 'empty' | 'error';
 
 const INITIAL_STATUS: SearchStatus = 'initial';
+type PageSize = 10 | 25 | 50;
+const PAGE_SIZES: readonly PageSize[] = [10, 25, 50];
 
 function getSearchErrorCode(error: unknown): SearchErrorCode {
   return error instanceof SearchError ? error.code : 'searchFailed';
@@ -44,7 +55,9 @@ function getSearchErrorCode(error: unknown): SearchErrorCode {
 export default function App() {
   const [locale, setLocale] = useState<Locale>(getInitialLocale);
   const [input, setInput] = useState('');
-  const [contacts, setContacts] = useState<Contact[]>([]);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState<PageSize>(10);
+  const [searchPage, setSearchPage] = useState<SearchPage | null>(null);
   const [status, setStatus] = useState<SearchStatus>(INITIAL_STATUS);
   const [errorCode, setErrorCode] = useState<SearchErrorCode | null>(null);
   const requestId = useRef(0);
@@ -57,9 +70,25 @@ export default function App() {
 
   function handleInputChange(nextInput: string) {
     setInput(nextInput);
-    setContacts([]);
+    setPage(1);
+    setSearchPage(null);
     setErrorCode(null);
     setStatus(nextInput.trim() ? 'waiting' : INITIAL_STATUS);
+  }
+
+  function handlePageChange(nextPage: number) {
+    if (nextPage === page) return;
+
+    setPage(nextPage);
+    setErrorCode(null);
+    setStatus('waiting');
+  }
+
+  function handlePageSizeChange(nextPageSize: PageSize) {
+    setPageSize(nextPageSize);
+    setPage(1);
+    setErrorCode(null);
+    if (input.trim()) setStatus('waiting');
   }
 
   function handleLocaleChange(nextLocale: Locale) {
@@ -83,10 +112,15 @@ export default function App() {
     const timer = window.setTimeout(async () => {
       setStatus('loading');
       try {
-        const nextContacts = await searchContacts(query, controller.signal);
+        const nextSearchPage = await searchContacts(
+          query,
+          page,
+          pageSize,
+          controller.signal,
+        );
         if (requestId.current === currentRequest) {
-          setContacts(nextContacts);
-          setStatus(nextContacts.length ? 'success' : 'empty');
+          setSearchPage(nextSearchPage);
+          setStatus(nextSearchPage.totalCount ? 'success' : 'empty');
         }
       } catch (requestError: unknown) {
         if (
@@ -95,7 +129,7 @@ export default function App() {
           ) &&
           requestId.current === currentRequest
         ) {
-          setContacts([]);
+          setSearchPage(null);
           setErrorCode(getSearchErrorCode(requestError));
           setStatus('error');
         }
@@ -106,7 +140,16 @@ export default function App() {
       window.clearTimeout(timer);
       controller.abort();
     };
-  }, [input]);
+  }, [input, page, pageSize]);
+
+  const resultRange = searchPage
+    ? text.resultsRange(
+        (searchPage.page - 1) * searchPage.pageSize + 1,
+        (searchPage.page - 1) * searchPage.pageSize +
+          searchPage.contacts.length,
+        searchPage.totalCount,
+      )
+    : '';
 
   const statusMessage =
     status === 'initial'
@@ -116,7 +159,7 @@ export default function App() {
         : status === 'loading'
           ? text.loading
           : status === 'success'
-            ? text.resultsCount(contacts.length)
+            ? text.resultsCount(searchPage?.totalCount ?? 0)
             : status === 'empty'
               ? text.noResults
               : '';
@@ -242,7 +285,10 @@ export default function App() {
               ) : null}
             </Box>
 
-            {status === 'success' ? (
+            {searchPage &&
+            (status === 'success' ||
+              status === 'waiting' ||
+              status === 'loading') ? (
               <Paper
                 component="section"
                 aria-label={text.results}
@@ -263,52 +309,107 @@ export default function App() {
                     {text.results}
                   </Typography>
                   <Typography color="text.secondary" variant="body2">
-                    {contacts.length}
+                    {status === 'success' ? resultRange : text.waiting}
                   </Typography>
                 </Box>
-                <List disablePadding>
-                  {contacts.map((contact) => (
-                    <ListItem
-                      key={contact.id}
-                      divider
-                      sx={{
-                        alignItems: 'center',
-                        gap: 1.5,
-                        px: { xs: 2, sm: 3 },
-                        py: 1.5,
-                      }}
-                    >
-                      <Box
-                        aria-hidden="true"
+                {status === 'success' ? (
+                  <List disablePadding>
+                    {searchPage.contacts.map((contact) => (
+                      <ListItem
+                        key={contact.id}
+                        divider
                         sx={{
                           alignItems: 'center',
-                          bgcolor: 'success.light',
-                          borderRadius: '50%',
-                          color: 'success.main',
-                          display: 'flex',
-                          flexShrink: 0,
-                          height: 36,
-                          justifyContent: 'center',
-                          width: 36,
+                          gap: 1.5,
+                          px: { xs: 2, sm: 3 },
+                          py: 1.5,
                         }}
                       >
-                        <PhoneOutlinedIcon fontSize="small" />
-                      </Box>
-                      <ListItemText
-                        primary={contact.name}
-                        secondary={contact.phone}
-                        slotProps={{
-                          primary: {
-                            sx: { color: 'text.primary', fontWeight: 600 },
-                          },
-                          secondary: {
-                            sx: { color: 'text.secondary', mt: 0.25 },
-                          },
-                        }}
-                      />
-                    </ListItem>
-                  ))}
-                </List>
+                        <Box
+                          aria-hidden="true"
+                          sx={{
+                            alignItems: 'center',
+                            bgcolor: 'success.light',
+                            borderRadius: '50%',
+                            color: 'success.main',
+                            display: 'flex',
+                            flexShrink: 0,
+                            height: 36,
+                            justifyContent: 'center',
+                            width: 36,
+                          }}
+                        >
+                          <PhoneOutlinedIcon fontSize="small" />
+                        </Box>
+                        <ListItemText
+                          primary={contact.name}
+                          secondary={contact.phone}
+                          slotProps={{
+                            primary: {
+                              sx: { color: 'text.primary', fontWeight: 600 },
+                            },
+                            secondary: {
+                              sx: { color: 'text.secondary', mt: 0.25 },
+                            },
+                          }}
+                        />
+                      </ListItem>
+                    ))}
+                  </List>
+                ) : null}
+                <Box
+                  sx={{
+                    alignItems: { sm: 'center' },
+                    display: 'flex',
+                    flexDirection: { xs: 'column', sm: 'row' },
+                    gap: 2,
+                    justifyContent: 'space-between',
+                    px: { xs: 2, sm: 3 },
+                    py: 2,
+                  }}
+                >
+                  <FormControl size="small" sx={{ minWidth: 180 }}>
+                    <InputLabel id="page-size-label">
+                      {text.rowsPerPage}
+                    </InputLabel>
+                    <Select
+                      id="page-size"
+                      label={text.rowsPerPage}
+                      labelId="page-size-label"
+                      onChange={(event) => {
+                        const nextPageSize = Number(event.target.value);
+                        if (
+                          nextPageSize === 10 ||
+                          nextPageSize === 25 ||
+                          nextPageSize === 50
+                        ) {
+                          handlePageSizeChange(nextPageSize);
+                        }
+                      }}
+                      value={pageSize}
+                    >
+                      {PAGE_SIZES.map((size) => (
+                        <MenuItem key={size} value={size}>
+                          {size}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  <Pagination
+                    count={searchPage.totalPages}
+                    getItemAriaLabel={(type, pageNumber) =>
+                      type === 'previous'
+                        ? text.previousPage
+                        : type === 'next'
+                          ? text.nextPage
+                          : text.page(pageNumber ?? 1)
+                    }
+                    onChange={(_event, nextPage) => handlePageChange(nextPage)}
+                    page={page}
+                    shape="rounded"
+                    siblingCount={0}
+                  />
+                </Box>
               </Paper>
             ) : null}
           </Box>

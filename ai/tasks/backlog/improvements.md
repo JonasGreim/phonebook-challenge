@@ -1,10 +1,5 @@
 # Backlog: FindCall improvements
 
-## 4. Pagination
-
-Search the complete phonebook, sort stably, then paginate with 10/25/50 entries per page;
-add coverage for totals, resets, duplicate names, and complete result traversal.
-
 ## 5. Copy phone numbers
 
 Add an accessible copy action per result with translated success and failure feedback that

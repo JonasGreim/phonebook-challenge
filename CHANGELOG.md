@@ -18,3 +18,6 @@
 - Erfolgreichen GitHub-Actions-Lauf nach Commit und Push bestätigt.
 - Deutsche und englische UI mit zentralen Übersetzungen, gespeicherter Sprachwahl und
   aktualisiertem Dokument-`lang` ergänzt.
+- Serverseitige Pagination nach vollständiger Suche mit stabiler Sortierung nach Name und
+  Kontakt-ID, Gesamtmetadaten, 10/25/50-Auswahl und responsiver Seitennavigation ergänzt.
+- Paging-, Gleichnamigkeits-, Seitengrenzen-, Reset- und Race-Condition-Tests ergänzt.

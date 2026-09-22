@@ -15,21 +15,26 @@
 - Die Anfrage wird vor der Suche getrimmt; leer bedeutet keine Suche und keine Treffer.
 - Telefonnummern werden nicht durchsucht und stets als unveränderte Zeichenkette angezeigt.
 - Akzente und Umschreibungen werden nicht angeglichen.
-- Die Originalreihenfolge bleibt erhalten; Ergebnisse werden nicht begrenzt.
+- Der Server durchsucht zuerst alle passenden Kontakte, sortiert sie deterministisch nach
+  Name und bei gleichem Namen nach stabiler Kontakt-ID und paginiert erst danach.
+- Standardmäßig werden 10 Treffer pro Seite angezeigt; 10, 25 und 50 sind auswählbar.
+- Jede Antwort enthält Treffer, Seite, Seitengröße, Gesamtzahl und Gesamtseiten. Ungültige
+  Seiten- oder Seitengrößenparameter werden serverseitig abgewiesen.
 - Nach 280 ms ohne Eingabe startet die Anfrage. Abbruch und eine Anfrage-ID verhindern,
   dass alte Antworten aktuellere Zustände überschreiben.
 
 ## Umfangsgrenzen
 
-Keine Anmeldung, Bearbeitung, Datenbank, Suchindex oder Veröffentlichung. Pagination und
-Kopieren von Telefonnummern sind geplant, aber noch nicht implementiert.
+Keine Anmeldung, Bearbeitung, Datenbank, Suchindex oder Veröffentlichung. Das Kopieren von
+Telefonnummern ist geplant, aber noch nicht implementiert.
 
 ## Sprache
 
 Die Oberfläche unterstützt Deutsch und Englisch. Die Sprachwahl ist sichtbar, wird lokal
 gespeichert und aktualisiert die Dokumentensprache. UI-Texte, Status-, Fehler- und
 Zugänglichkeitsmeldungen stammen aus einer zentralen Übersetzungsquelle. Markenname und
-Kontaktdaten bleiben unverändert; ein Sprachwechsel erhält die aktuelle Suche und Treffer.
+Kontaktdaten bleiben unverändert; ein Sprachwechsel erhält Suche, Seitengröße, Seite und
+Treffer.
 
 ## Technische Grundlage
 
@@ -42,5 +47,7 @@ unveränderte Quelldatei `telefonbuch.json`.
 
 Teilstrings, Groß-/Kleinschreibung, Leerzeichen, doppelte Namen mit verschiedenen
 Nummern, leere Suche, keine Treffer, Datenvalidierung sowie verspätete Antworten und
-Leeren des Feldes sind automatisiert geprüft. Die sichtbare Fehlerdarstellung wird vom
-Code abgedeckt, ist aber noch manuell im Browser zu prüfen.
+Leeren des Feldes werden durch Tests abgedeckt. Pagination-Tests prüfen die vollständige,
+eindeutige Kontakt-ID-Menge über alle Seiten, gleiche Namen, Seitengrößen, Grenzen,
+ungültige Parameter, Resets und alte Antworten. Die sichtbare Fehlerdarstellung sowie
+Mobil- und Tastaturbedienung sind noch manuell im Browser zu prüfen.

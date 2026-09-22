@@ -7,13 +7,16 @@ React + Material UI (TypeScript)  -- POST / GraphQL -->  Apollo Server (TypeScri
 ```
 
 Der Vite-Client enthält keine Telefonbuchdatei. Er ruft ausschließlich
-`searchPhonebook(query)` auf. Der Apollo Server lädt die JSON-Datei beim Start,
+`searchPhonebook(query, page, pageSize)` auf. Der Apollo Server lädt die JSON-Datei beim Start,
 validiert Array, exakte Felder `name`/`phone` und nicht-leere Strings und hält die
 120 Einträge im Speicher.
 
 Der Server ergänzt für React/GraphQL nur zur Laufzeit `contact-<Index>` als stabile ID.
-Das ist nötig, weil ein Name zweimal vorkommt; die Quelldatei bleibt unverändert. Die
-Suche filtert im Speicher und gibt in Originalreihenfolge alle Treffer zurück.
+Das ist nötig, weil ein Name zweimal vorkommt; die Quelldatei bleibt unverändert. Der Server
+filtert zuerst alle Kontakte im Speicher, sortiert sie nach Name und bei gleichem Namen nach
+stabiler ID und schneidet dann die angeforderte Seite aus. Die GraphQL-Antwort enthält
+`contacts`, `page`, `pageSize`, `totalCount` und `totalPages`; ungültige Größen oder Seiten
+werden als Eingabefehler abgewiesen.
 
 Der Client verwendet bewusst `fetch` statt Apollo Client: Für eine einzelne Abfrage wäre
 ein zusätzlicher Client-Cache und eine weitere Abhängigkeit unnötig. `AbortController`
@@ -27,7 +30,8 @@ Servergrenze und die Prüfung der GraphQL-Antwort im Client behandeln Daten weit
 `src/i18n.ts` ist die zentrale, typisierte Quelle für deutsche und englische UI-Texte sowie
 Suchfehler-Codes. `App` speichert die Sprachwahl unter `findcall-locale` in Local Storage und
 aktualisiert `document.documentElement.lang` und den Seitentitel. Der Sprachzustand ist von
-Suchanfrage und Treffern getrennt, sodass beides beim Wechsel erhalten bleibt.
+Suchanfrage, Seitengröße, Seite und Treffern getrennt, sodass sie beim Wechsel erhalten
+bleiben.
 
 Die automatische Qualitätssicherung verwendet den einzelnen Befehl `npm run check`. Der
 Workflow `.github/workflows/quality.yml` installiert auf GitHub Actions mit `npm ci` aus

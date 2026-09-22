@@ -7,7 +7,7 @@ sowie Blau (`#2563EB`) für interaktive Elemente und den Telefonhörer im Logo. 
 Seitenblau (`#F3F6FA`) trennt die weiße Inhaltsfläche ruhig vom Hintergrund; Rahmen sind
 `#DCE4EE`. Das Grün wird ausschließlich als Icon-Fläche verwendet, der kontrastreichere
 Erfolgston des Themes für Status verwendet. Alle Werte, Typografie, Rundungen, Fokus- und
-Komponentenvarianten liegen in `src/theme.js`.
+Komponentenvarianten liegen in `src/theme.ts`.
 
 Die Schriftfolge ist `Inter` mit robusten System-Fallbacks. Inter wird nicht nachgeladen,
 da kein lokales Font-Asset vorliegt; die Oberfläche bleibt daher ohne externe Anfrage
@@ -22,14 +22,20 @@ das prominent beschriftete Suchfeld vor die Trefferliste. Auf kleinen Bildschirm
 sie die gesamte verfügbare Breite, auf großen bleibt die Lesebreite begrenzt.
 
 Der kompakte Header enthält die Wortmarke, eine sichtbare DE/EN-Sprachumschaltung und keine
-künstliche Navigation. Die Wahl wird gespeichert; beim Wechsel bleiben Suche und Treffer
-sichtbar. Die Suchanfrage kann über eine beschriftete Icon-Schaltfläche geleert werden.
+künstliche Navigation. Die Wahl wird gespeichert; beim Wechsel bleiben Suche, Seitengröße,
+Seite und Treffer sichtbar. Die Suchanfrage kann über eine beschriftete Icon-Schaltfläche
+geleert werden.
+
+Treffer werden in einer kompakten Liste mit einem übersetzten Bereich wie „1–10 von 34
+Treffern“ gezeigt. Darunter stehen eine Seitengrößenauswahl (10, 25 oder 50) und eine
+Tastatur-bedienbare Seitennavigation. Auf schmalen Ansichten werden beide Elemente
+untereinander mit ausreichendem Abstand angeordnet.
 
 ## Zustände
 
 - Start/leer: hilfreicher Hinweis, keine alte Trefferliste.
 - Warten/Laden: neutrale Statusmeldung; beim Laden zusätzlich ein Spinner.
-- Treffer: Anzahl und Liste mit Name sowie Telefonnummer.
+- Treffer: Gesamtbereich, Liste mit Name sowie Telefonnummer, Seitengröße und Navigation.
 - Keine Treffer: eindeutige, nicht-technische Meldung.
 - Fehler: hervorgehobene Fehlermeldung statt leerer Trefferliste.
 
@@ -46,3 +52,4 @@ ausstehende Ergebnisse ignoriert und der Startzustand wiederhergestellt.
 | Symbolische FindCall-Wortmarke mit Favicon | Marke ist im Header und Browser-Tab schnell erkennbar, ohne Marketingbereich. | Externes Bildmaterial wäre schwerer wartbar und lizenzabhängig. | Favicon im Produktions-Build vorhanden; Darstellung bei 16/32 px manuell prüfen. |
 | Dezente Liste statt Einzelkarten | Viele Treffer bleiben scanbar und brauchen wenig Platz. | Große Karten würden auf Mobilgeräten unnötig viel scrollen. | Manuell mit langen Einträgen und schmalem Viewport prüfen. |
 | Zentraler DE/EN-Schalter | Sprache und zugängliche Bezeichnungen wechseln konsistent, ohne den Suchkontext zu verlieren. | Getrennte Übersetzungen in Komponenten würden schneller auseinanderlaufen. | Automatisiert für Erhalt von Suche, Treffer, Fehler und `lang` geprüft. |
+| Serverseitige Pagination nach Gesamtsuche | Keine Treffer gehen an Seitengrenzen verloren; gleiche Namen bleiben durch die ID-Sortierung unterscheidbar. | Clientseitiges Nachladen oder Paging vor dem Filtern würde unvollständige beziehungsweise inkonsistente Treffer erzeugen. | Testfälle für vollständige ID-Menge, Seitenränder, Größen, Resets und alte Antworten vorhanden; Ausführung in dieser Umgebung offen. |

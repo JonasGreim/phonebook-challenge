@@ -7,7 +7,12 @@ import {
 } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import App from './App.js';
-import { SearchError, searchContacts, type Contact } from './api.js';
+import {
+  SearchError,
+  searchContacts,
+  type Contact,
+  type SearchPage,
+} from './api.js';
 
 vi.mock('./api.js', async (importOriginal) => {
   const actual = await importOriginal<typeof import('./api.js')>();
@@ -15,6 +20,16 @@ vi.mock('./api.js', async (importOriginal) => {
 });
 
 const mockedSearchContacts = vi.mocked(searchContacts);
+
+function createSearchPage(
+  contacts: Contact[],
+  page = 1,
+  pageSize = 10,
+  totalCount = contacts.length,
+  totalPages = Math.ceil(totalCount / pageSize),
+) {
+  return { contacts, page, pageSize, totalCount, totalPages };
+}
 
 describe('App', () => {
   beforeEach(() => {
@@ -25,13 +40,15 @@ describe('App', () => {
   afterEach(() => {
     cleanup();
     vi.useRealTimers();
-    vi.clearAllMocks();
+    vi.resetAllMocks();
   });
 
   it('wartet vor der Suche und zeigt Treffer nach der Serverantwort', async () => {
-    mockedSearchContacts.mockResolvedValueOnce([
-      { id: 'contact-0', name: 'Anna Muster', phone: '0123' },
-    ]);
+    mockedSearchContacts.mockResolvedValueOnce(
+      createSearchPage([
+        { id: 'contact-0', name: 'Anna Muster', phone: '0123' },
+      ]),
+    );
     render(<App />);
 
     fireEvent.change(screen.getByLabelText('Name suchen'), {
@@ -45,6 +62,8 @@ describe('App', () => {
 
     expect(mockedSearchContacts).toHaveBeenCalledWith(
       'anna',
+      1,
+      10,
       expect.any(AbortSignal),
     );
     expect(screen.getByText('Anna Muster')).toBeInTheDocument();
@@ -52,22 +71,22 @@ describe('App', () => {
   });
 
   it('ignores a late response and clears results immediately', async () => {
-    let resolveFirst: (contacts: Contact[]) => void = () => {
+    let resolveFirst: (searchPage: SearchPage) => void = () => {
       throw new Error('First request was not initialized.');
     };
-    let resolveSecond: (contacts: Contact[]) => void = () => {
+    let resolveSecond: (searchPage: SearchPage) => void = () => {
       throw new Error('Second request was not initialized.');
     };
     mockedSearchContacts
       .mockImplementationOnce(
         () =>
-          new Promise<Contact[]>((resolve) => {
+          new Promise<SearchPage>((resolve) => {
             resolveFirst = resolve;
           }),
       )
       .mockImplementationOnce(
         () =>
-          new Promise<Contact[]>((resolve) => {
+          new Promise<SearchPage>((resolve) => {
             resolveSecond = resolve;
           }),
       );
@@ -84,14 +103,20 @@ describe('App', () => {
     });
 
     await act(async () => {
-      resolveSecond([
-        { id: 'contact-1', name: 'Aktueller Kontakt', phone: '0456' },
-      ]);
+      resolveSecond(
+        createSearchPage([
+          { id: 'contact-1', name: 'Aktueller Kontakt', phone: '0456' },
+        ]),
+      );
     });
     expect(screen.getByText('Aktueller Kontakt')).toBeInTheDocument();
 
     await act(async () => {
-      resolveFirst([{ id: 'contact-0', name: 'Alter Kontakt', phone: '0123' }]);
+      resolveFirst(
+        createSearchPage([
+          { id: 'contact-0', name: 'Alter Kontakt', phone: '0123' },
+        ]),
+      );
     });
     expect(screen.queryByText('Alter Kontakt')).not.toBeInTheDocument();
 
@@ -105,9 +130,11 @@ describe('App', () => {
   });
 
   it('switches language without clearing the active query or results', async () => {
-    mockedSearchContacts.mockResolvedValueOnce([
-      { id: 'contact-0', name: 'Anna Muster', phone: '0123' },
-    ]);
+    mockedSearchContacts.mockResolvedValueOnce(
+      createSearchPage([
+        { id: 'contact-0', name: 'Anna Muster', phone: '0123' },
+      ]),
+    );
     render(<App />);
     const input = screen.getByLabelText('Name suchen');
 
@@ -133,6 +160,137 @@ describe('App', () => {
 
     expect(screen.getByLabelText('Search by name')).toBeInTheDocument();
     expect(document.documentElement.lang).toBe('en');
+  });
+
+  it('resets the page for a new query and ignores an older page response', async () => {
+    let resolveSecond: (searchPage: SearchPage) => void = () => {
+      throw new Error('Second request was not initialized.');
+    };
+    mockedSearchContacts
+      .mockResolvedValueOnce(
+        createSearchPage(
+          [{ id: 'contact-1', name: 'First Page', phone: '0101' }],
+          1,
+          10,
+          26,
+          3,
+        ),
+      )
+      .mockImplementationOnce(
+        () =>
+          new Promise<SearchPage>((resolve) => {
+            resolveSecond = resolve;
+          }),
+      )
+      .mockResolvedValueOnce(
+        createSearchPage(
+          [{ id: 'contact-1', name: 'New Query Page', phone: '0101' }],
+          1,
+          10,
+          26,
+          3,
+        ),
+      );
+    render(<App />);
+
+    fireEvent.change(screen.getByLabelText('Name suchen'), {
+      target: { value: 'page' },
+    });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(280);
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Seite 2' }));
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(280);
+    });
+    expect(mockedSearchContacts).toHaveBeenLastCalledWith(
+      'page',
+      2,
+      10,
+      expect.any(AbortSignal),
+    );
+
+    fireEvent.change(screen.getByLabelText('Name suchen'), {
+      target: { value: 'new page' },
+    });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(280);
+    });
+    expect(mockedSearchContacts).toHaveBeenLastCalledWith(
+      'new page',
+      1,
+      10,
+      expect.any(AbortSignal),
+    );
+    expect(screen.getByText('New Query Page')).toBeInTheDocument();
+    expect(screen.getByText('1–1 von 26 Treffern')).toBeInTheDocument();
+
+    await act(async () => {
+      resolveSecond(
+        createSearchPage(
+          [{ id: 'contact-11', name: 'Older Page', phone: '0111' }],
+          2,
+          10,
+          26,
+          3,
+        ),
+      );
+    });
+    expect(screen.queryByText('Older Page')).not.toBeInTheDocument();
+  });
+
+  it('resets the page for a new page size and preserves it on a language switch', async () => {
+    mockedSearchContacts
+      .mockResolvedValueOnce(
+        createSearchPage(
+          [{ id: 'contact-1', name: 'First Page', phone: '0101' }],
+          1,
+          10,
+          26,
+          3,
+        ),
+      )
+      .mockResolvedValueOnce(
+        createSearchPage(
+          [{ id: 'contact-1', name: 'Resized First Page', phone: '0101' }],
+          1,
+          25,
+          26,
+          2,
+        ),
+      )
+      .mockResolvedValueOnce(
+        createSearchPage(
+          [{ id: 'contact-26', name: 'Second Page', phone: '0126' }],
+          2,
+          25,
+          26,
+          2,
+        ),
+      );
+    render(<App />);
+
+    fireEvent.change(screen.getByLabelText('Name suchen'), {
+      target: { value: 'page' },
+    });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(280);
+    });
+    fireEvent.mouseDown(screen.getByRole('combobox'));
+    fireEvent.click(screen.getByRole('option', { name: '25' }));
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(280);
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Seite 2' }));
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(280);
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Englisch' }));
+
+    expect(screen.getByText('Second Page')).toBeInTheDocument();
+    expect(screen.getByText('26–26 of 26 results')).toBeInTheDocument();
+    expect(screen.getByRole('combobox')).toHaveTextContent('25');
+    expect(mockedSearchContacts).toHaveBeenCalledTimes(3);
   });
 
   it('translates error feedback after a language change', async () => {

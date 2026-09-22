@@ -1,11 +1,18 @@
 import { GraphQLError } from 'graphql';
-import { searchPhonebook, type Contact } from './phonebook.js';
+import {
+  searchPhonebookPage,
+  type Contact,
+  type PhonebookPage,
+} from './phonebook.js';
 
-type SearchPhonebookArgs = { query: string };
+type SearchPhonebookArgs = { page: number; pageSize: number; query: string };
 
 type Resolvers = {
   Query: {
-    searchPhonebook: (_parent: unknown, args: SearchPhonebookArgs) => Contact[];
+    searchPhonebook: (
+      _parent: unknown,
+      args: SearchPhonebookArgs,
+    ) => PhonebookPage;
   };
 };
 
@@ -16,17 +23,25 @@ export const typeDefs = `#graphql
     phone: String!
   }
 
+  type PhonebookPage {
+    contacts: [Contact!]!
+    page: Int!
+    pageSize: Int!
+    totalCount: Int!
+    totalPages: Int!
+  }
+
   type Query {
-    searchPhonebook(query: String!): [Contact!]!
+    searchPhonebook(query: String!, page: Int!, pageSize: Int!): PhonebookPage!
   }
 `;
 
 export function createResolvers(contacts: Contact[]): Resolvers {
   return {
     Query: {
-      searchPhonebook: (_parent, { query }) => {
+      searchPhonebook: (_parent, { query, page, pageSize }) => {
         try {
-          return searchPhonebook(contacts, query);
+          return searchPhonebookPage(contacts, query, page, pageSize);
         } catch (error: unknown) {
           const message =
             error instanceof Error ? error.message : 'Invalid search query.';

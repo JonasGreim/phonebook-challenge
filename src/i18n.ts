@@ -17,8 +17,13 @@ type Translations = {
   languageLabel: string;
   loading: string;
   noResults: string;
+  nextPage: string;
+  page: (page: number) => string;
+  previousPage: string;
   results: string;
   resultsCount: (count: number) => string;
+  resultsRange: (from: number, to: number, total: number) => string;
+  rowsPerPage: string;
   searchLabel: string;
   slogan: string;
   waiting: string;
@@ -39,8 +44,13 @@ export const translations: Record<Locale, Translations> = {
     languageLabel: 'Sprache',
     loading: 'Telefonbuch wird durchsucht.',
     noResults: 'Keine passenden Kontakte gefunden.',
+    nextPage: 'Nächste Seite',
+    page: (page) => `Seite ${page}`,
+    previousPage: 'Vorherige Seite',
     results: 'Suchergebnisse',
     resultsCount: (count) => `${count} Treffer gefunden.`,
+    resultsRange: (from, to, total) => `${from}–${to} von ${total} Treffern`,
+    rowsPerPage: 'Treffer pro Seite',
     searchLabel: 'Name suchen',
     slogan: 'Namen suchen. Telefonnummer finden.',
     waiting: 'Suche wird vorbereitet.',
@@ -62,8 +72,13 @@ export const translations: Record<Locale, Translations> = {
     languageLabel: 'Language',
     loading: 'Searching the phonebook.',
     noResults: 'No matching contacts found.',
+    nextPage: 'Next page',
+    page: (page) => `Page ${page}`,
+    previousPage: 'Previous page',
     results: 'Search results',
     resultsCount: (count) => `${count} results found.`,
+    resultsRange: (from, to, total) => `${from}–${to} of ${total} results`,
+    rowsPerPage: 'Results per page',
     searchLabel: 'Search by name',
     slogan: 'Search a name. Find a number.',
     waiting: 'Preparing search.',

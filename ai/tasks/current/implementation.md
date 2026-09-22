@@ -1,30 +1,40 @@
-# Current task: Step 3 - Internationalization
+# Current task: Step 4 - Pagination
 
 ## Goal
 
-Add a German/English interface with central translations, a visible language switch,
-persisted language selection, and an updated document language.
+Search the complete phonebook on the server, sort matching contacts deterministically, and
+return one validated page at a time without losing independent contacts with the same name.
 
 ## Scope
 
-Central UI translations, translated API error feedback, language persistence, `lang` and
-title updates, targeted tests, and documentation. Pagination, clipboard support, and the
-English README remain planned in [`ai/tasks/backlog/improvements.md`](../backlog/improvements.md).
+GraphQL page metadata, server-side search/sort/pagination, the 10/25/50 page-size control,
+responsive page navigation, translated range and accessible labels, targeted tests, and
+documentation. Clipboard support and the English README remain planned in
+[`ai/tasks/backlog/improvements.md`](../backlog/improvements.md).
 
 ## Relevant context
 
-`src/i18n.ts`, `src/App.tsx`, `src/api.ts`, `src/FindCallLogo.tsx`, tests, and `docs/`.
+`server/phonebook.ts`, `server/schema.ts`, `src/api.ts`, `src/App.tsx`, `src/i18n.ts`,
+tests, and `docs/`.
 
 ## Acceptance checks
 
-- All UI strings, status messages, errors, tooltips, and accessible labels are translated
-  centrally.
-- The visible language switch preserves the active query and results, persists its choice,
-  and updates the document language.
-- Existing search behavior and data remain unchanged and the local check chain passes.
+- A non-empty query searches the full validated phonebook, sorts by name then stable contact
+  ID, and returns only the requested valid page plus total metadata.
+- The UI defaults to 10 results, offers 10/25/50, shows a translated result range, resets to
+  page 1 for a query or page-size change, and retains the page on a language change.
+- Tests cover complete page traversal, same-name contacts, boundaries, invalid requests,
+  resets, stale responses, and language preservation.
 
 ## Status and next step
 
-Implemented and locally verified: `npm run check` passes and now includes 10 tests. The
-language switch preserves active results, stores the choice in local storage, and updates
-the document language and title. Stop here for user review before step 4.
+Implemented. The user's pre-fix `npm run check` output confirms that typecheck, lint, and
+format checking passed, while two UI tests failed. Both failures were corrected in the test
+harness: Material UI's non-native select is now operated through its menu, and mocked one-off
+responses are reset between tests. A post-fix automated run could not be performed in this
+workspace because neither Node.js nor npm is installed (`npm: command not found`); its result
+remains unverified here.
+
+Step 3's committed implementation is documented as locally checked, but its documented
+manual browser checks (mobile layout and keyboard/accessibility inspection) remain open and
+are not represented as a completed manual verification.
