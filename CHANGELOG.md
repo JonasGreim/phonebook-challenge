@@ -52,3 +52,5 @@
 - Simplified the footer to one centered author-and-profile group with compact icon targets and
   preserved localized personal-profile accessibility.
 - Kept the compact author and profile links aligned in one centered row on narrow screens.
+- Prepared free Render static/web services with CI-gated deployment, production endpoint handling,
+  and localized delayed-service startup feedback.

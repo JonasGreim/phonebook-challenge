@@ -19,6 +19,8 @@ const server = new ApolloServer({
   resolvers: createResolvers(contacts),
 });
 
-const { url } = await startStandaloneServer(server, { listen: { port } });
+const { url } = await startStandaloneServer(server, {
+  listen: { host: '0.0.0.0', port },
+});
 
 console.log(`GraphQL server ready at ${url}`);

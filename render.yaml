@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: findcall-api
+    runtime: node
+    plan: free
+    branch: main
+    buildCommand: npm ci
+    startCommand: npm run start:server
+    autoDeployTrigger: checksPass
+
+  - type: web
+    name: findcall
+    runtime: static
+    branch: main
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
+    autoDeployTrigger: checksPass
+    envVars:
+      - key: VITE_GRAPHQL_URL
+        sync: false

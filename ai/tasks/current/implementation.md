@@ -1,42 +1,44 @@
-# Current task: Simplify and center the author footer
+# Current task: Prepare free Render hosting with CI-gated deployment
 
 ## Goal
 
-Create a compact, centered footer focused only on Jonas Greim's authorship and personal profiles.
+Prepare free Render Static Site and Web Service deployment from `main` after successful GitHub
+Actions checks, without creating a public deployment.
 
 ## Scope
 
-Remove only the footer's project repository link, retaining repository references elsewhere. Keep
-the dynamic year, confirmed profile URLs, translated accessible names/tooltips, and external-link
-behaviour. Center one author-and-profile group, use 14 px muted blue-gray text, 20 px icons, a
-12 px author-to-profile gap, 32 px icon targets with 4 px between them, a one-line centered layout
-at narrow widths, focused tests, UI/UX documentation, status, and the Changelog. Preserve normal
-document flow.
+Add minimal `render.yaml` free services, use `checksPass`, bind the backend to Render's `PORT`,
+require `VITE_GRAPHQL_URL` in production, and show a neutral delayed-start message after three
+pending seconds. Preserve cancellation, stale-response protection, server-only data, and all
+existing behavior. Update documentation and record manual account, public-data authorization, and
+live verification as pending.
 
 ## Acceptance checks
 
-- The footer contains only the dynamic copyright/author text and verified GitHub and LinkedIn
-  profile links in one centered group.
-- Text and icons align cleanly and remain in one centered row at narrow widths; profile targets
-  remain adjacent and non-overlapping.
-- Both links use balanced 20 px icons, 32 px targets with a 4 px gap, primary-blue hover, and
-  clear focus treatment.
-- Translated accessible names and tooltips update with locale, decorative icons are hidden from
-  assistive technology, and Clipboard feedback reserves space above the footer.
-- Focused integration coverage and configured automated checks pass; browser checks are separate.
+- Free static and web services are configured from `main` with `checksPass`; no paid resources,
+  deployment hooks, credentials, or database are introduced.
+- Production requires a configured HTTPS backend URL, while the backend binds to `0.0.0.0:$PORT`.
+- Delayed searches show and correctly clear translated startup feedback.
+- Automated, local-server, data-integrity, client-bundle, live-deployment, and browser checks are
+  recorded separately.
 
 ## Status and next step
 
-Implemented: `ProjectFooter` now contains only a centered dynamic author line and confirmed
-GitHub/LinkedIn profile links. The repository link and its translation entries were removed only
-from the footer. The group uses muted 14 px text, 20 px icons, 12 px author-to-profile spacing,
-32 px profile targets, and 4 px between targets. On narrow screens, the compact author/profile
-group remains centered on one line.
+Implemented: `render.yaml` prepares a free Node web service and free static site on `main`, both
+with `checksPass`. The web service uses `npm ci` and `npm run start:server`; the static site uses
+`npm ci && npm run build`, publishes `dist`, and prompts for `VITE_GRAPHQL_URL` during initial
+Blueprint setup. The server binds to `0.0.0.0:$PORT`. Production has no localhost fallback.
+`usePhonebookSearch` now shows a translated neutral startup explanation after three pending
+seconds and clears it on completion or supersession.
 
-Verification passed: focused integration coverage passed with 15 tests. `npm run check` passed
-with typecheck, lint, format check, 31 tests, and the production build. The known build chunk-size
-warning (522.39 kB / 163.71 kB gzip) is not a failure.
+Verification passed locally: focused integration coverage passed with 16 tests. `npm run check`
+passed with typecheck, lint, format check, 32 tests, and production build. A local server started
+with `PORT=4310`, bound to `0.0.0.0`, and returned a successful CORS preflight for a cross-origin
+POST. The phonebook checksum matches `HEAD`, and the client build has no `telefonbuch.json` asset
+or source reference. The known build chunk-size warning (521.62 kB / 163.46 kB gzip) is not a
+failure.
 
-Browser verification remains pending because no browser surface is available in this environment.
-When available, verify short and long pages, narrow one-line layout, browser zoom, tooltips,
-keyboard focus, localized labels, and Snackbar clearance.
+Pending: no Render account setup, GitHub/Render authorization, service names, deployment URLs,
+live HTTPS/GraphQL/browser/idle-start verification, or post-CI deployment trigger can be confirmed
+locally. Before any public deployment, obtain explicit authorization to expose the supplied
+phonebook data through the public GraphQL search API.

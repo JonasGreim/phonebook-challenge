@@ -22,6 +22,8 @@
   page-size parameters are rejected by the server.
 - A request starts after 280 ms without input. Abortion and a request ID prevent older responses
   from replacing newer state.
+- After three pending seconds, a neutral translated message explains that a free hosted service may
+  still be starting; it clears when the request finishes or is superseded.
 
 ## Internationalization
 
@@ -53,7 +55,8 @@ Client, server, and relevant tests use strict TypeScript. JSON data continues to
 validation; types do not replace it. ESLint checks TypeScript/React code, while Prettier formats
 only source and configuration, never the immutable `telefonbuch.json` source.
 
-There is no sign-in, editing, database, search index, or deployment in scope.
+There is no sign-in, editing, database, or search index. Render deployment is prepared but not
+created or verified; the public backend URL must be configured for the static production build.
 
 ## Verification coverage
 

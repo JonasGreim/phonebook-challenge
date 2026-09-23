@@ -40,6 +40,7 @@ interface SearchResultsProps {
   pageSize: PageSize;
   resultQuery: string;
   searchPage: SearchPage | null;
+  showServiceStarting: boolean;
   status: SearchStatus;
 }
 
@@ -55,6 +56,7 @@ export default function SearchResults({
   pageSize,
   resultQuery,
   searchPage,
+  showServiceStarting,
   status,
 }: SearchResultsProps) {
   const text = translations[locale];
@@ -70,7 +72,9 @@ export default function SearchResults({
     status === 'waiting'
       ? text.waiting
       : status === 'loading'
-        ? text.loading
+        ? showServiceStarting
+          ? text.serviceStarting
+          : text.loading
         : '';
   const headerMetadata =
     status === 'success'

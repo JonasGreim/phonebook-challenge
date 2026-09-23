@@ -18,6 +18,13 @@ list source and configuration explicitly so the supplied data source stays uncha
 GitHub Actions workflow uses `npm ci`, the lockfile, and `.nvmrc` before running that command. A
 local success does not prove remote CI; only a visible post-push workflow may be recorded as CI.
 
+## Free Render deployment
+
+`render.yaml` prepares a free static site and free GraphQL web service. Both deploy from `main`
+only after GitHub Actions checks pass. The static build receives the public backend URL through
+`VITE_GRAPHQL_URL`, avoiding a production localhost fallback. The UI explains free-tier cold
+starts instead of adding keep-alive traffic.
+
 ## Internationalization without another dependency
 
 One small typed translation module is sufficient for the current two static locales. It

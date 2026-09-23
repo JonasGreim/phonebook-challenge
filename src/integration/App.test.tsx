@@ -179,6 +179,38 @@ describe('App', () => {
     ).not.toBeInTheDocument();
   });
 
+  it('explains a delayed service start and clears the message for a newer search', async () => {
+    mockedSearchContacts.mockImplementation(
+      () => new Promise<SearchPage>(() => undefined),
+    );
+    render(<App />);
+    const input = screen.getByLabelText('Name suchen');
+
+    fireEvent.change(input, { target: { value: 'slow' } });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(280);
+    });
+    expect(
+      screen.getByText('Telefonbuch wird durchsucht.'),
+    ).toBeInTheDocument();
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(3_000);
+    });
+    expect(
+      screen.getByText(
+        'Der Dienst wird gestartet. Die erste Suche kann bis zu einer Minute dauern.',
+      ),
+    ).toBeInTheDocument();
+
+    fireEvent.change(input, { target: { value: 'newer' } });
+    expect(
+      screen.queryByText(
+        'Der Dienst wird gestartet. Die erste Suche kann bis zu einer Minute dauern.',
+      ),
+    ).not.toBeInTheDocument();
+  });
+
   it('renders an accepted empty search inside the results card and clears it', async () => {
     mockedSearchContacts
       .mockResolvedValueOnce(

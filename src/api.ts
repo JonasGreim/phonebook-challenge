@@ -1,4 +1,6 @@
-const endpoint = import.meta.env.VITE_GRAPHQL_URL || 'http://localhost:4000/';
+const endpoint =
+  import.meta.env.VITE_GRAPHQL_URL ||
+  (import.meta.env.DEV ? 'http://localhost:4000/' : undefined);
 
 const SEARCH_PHONEBOOK = `
   query SearchPhonebook($query: String!, $page: Int!, $pageSize: Int!) {
@@ -89,6 +91,10 @@ export async function searchContacts(
   pageSize: number,
   signal: AbortSignal,
 ): Promise<SearchPage> {
+  if (!endpoint) {
+    throw new SearchError('serviceUnavailable');
+  }
+
   const response = await fetch(endpoint, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

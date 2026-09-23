@@ -49,6 +49,9 @@ result surface. Highlighting does not change the name's text or accessible name.
 
 - Initial/empty: no result-state message or stale list; the labelled search field remains visible.
 - Waiting/loading: neutral status; loading additionally shows a spinner.
+- Delayed hosted-service start: after three seconds, loading explains in the active language that
+  the first request can take up to a minute. It is neutral, does not move focus, and clears with
+  the request.
 - Results: range, contact list, page size, and navigation.
 - Copying: a bottom Snackbar reports success or a clear failure without shifting content. Success
   uses the theme's green status color; errors use the white FindCall surface with a blue accent.

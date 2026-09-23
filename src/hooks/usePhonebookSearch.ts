@@ -11,6 +11,7 @@ export type SearchStatus =
 export type PageSize = 10 | 25 | 50;
 
 const INITIAL_STATUS: SearchStatus = 'initial';
+const SERVICE_STARTING_DELAY_MS = 3_000;
 
 function getSearchErrorCode(error: unknown): SearchErrorCode {
   return error instanceof SearchError ? error.code : 'searchFailed';
@@ -24,6 +25,7 @@ export function usePhonebookSearch() {
   const [resultQuery, setResultQuery] = useState('');
   const [status, setStatus] = useState<SearchStatus>(INITIAL_STATUS);
   const [errorCode, setErrorCode] = useState<SearchErrorCode | null>(null);
+  const [showServiceStarting, setShowServiceStarting] = useState(false);
   const requestId = useRef(0);
 
   function handleInputChange(nextInput: string) {
@@ -32,6 +34,7 @@ export function usePhonebookSearch() {
     setSearchPage(null);
     setResultQuery('');
     setErrorCode(null);
+    setShowServiceStarting(false);
     setStatus(nextInput.trim() ? 'waiting' : INITIAL_STATUS);
   }
 
@@ -40,6 +43,7 @@ export function usePhonebookSearch() {
 
     setPage(nextPage);
     setErrorCode(null);
+    setShowServiceStarting(false);
     setStatus('waiting');
   }
 
@@ -47,6 +51,7 @@ export function usePhonebookSearch() {
     setPageSize(nextPageSize);
     setPage(1);
     setErrorCode(null);
+    setShowServiceStarting(false);
     if (input.trim()) setStatus('waiting');
   }
 
@@ -59,6 +64,11 @@ export function usePhonebookSearch() {
     const controller = new AbortController();
     const timer = window.setTimeout(async () => {
       setStatus('loading');
+      const serviceStartingTimer = window.setTimeout(() => {
+        if (requestId.current === currentRequest) {
+          setShowServiceStarting(true);
+        }
+      }, SERVICE_STARTING_DELAY_MS);
       try {
         const nextSearchPage = await searchContacts(
           query,
@@ -70,6 +80,7 @@ export function usePhonebookSearch() {
           setSearchPage(nextSearchPage);
           setResultQuery(query);
           setStatus(nextSearchPage.totalCount ? 'success' : 'empty');
+          setShowServiceStarting(false);
         }
       } catch (requestError: unknown) {
         if (
@@ -82,13 +93,17 @@ export function usePhonebookSearch() {
           setResultQuery('');
           setErrorCode(getSearchErrorCode(requestError));
           setStatus('error');
+          setShowServiceStarting(false);
         }
+      } finally {
+        window.clearTimeout(serviceStartingTimer);
       }
     }, 280);
 
     return () => {
       window.clearTimeout(timer);
       controller.abort();
+      setShowServiceStarting(false);
     };
   }, [input, page, pageSize]);
 
@@ -102,6 +117,7 @@ export function usePhonebookSearch() {
     pageSize,
     resultQuery,
     searchPage,
+    showServiceStarting,
     status,
   };
 }

@@ -121,6 +121,7 @@ export default function App() {
                 pageSize={search.pageSize}
                 resultQuery={search.resultQuery}
                 searchPage={search.searchPage}
+                showServiceStarting={search.showServiceStarting}
                 status={search.status}
               />
             </Box>

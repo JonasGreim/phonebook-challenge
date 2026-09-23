@@ -34,6 +34,7 @@ type Translations = {
   resultsRange: (from: number, to: number, total: number) => string;
   rowsPerPage: string;
   searchLabel: string;
+  serviceStarting: string;
   slogan: string;
   waiting: string;
   errors: Record<TranslationKey, string>;
@@ -73,6 +74,8 @@ export const translations: Record<Locale, Translations> = {
     resultsRange: (from, to, total) => `${from}–${to} von ${total} Treffern`,
     rowsPerPage: 'Treffer pro Seite',
     searchLabel: 'Name suchen',
+    serviceStarting:
+      'Der Dienst wird gestartet. Die erste Suche kann bis zu einer Minute dauern.',
     slogan: 'Namen suchen. Telefonnummer finden.',
     waiting: 'Suche wird vorbereitet.',
     errors: {
@@ -112,6 +115,8 @@ export const translations: Record<Locale, Translations> = {
     resultsRange: (from, to, total) => `${from}–${to} of ${total} results`,
     rowsPerPage: 'Results per page',
     searchLabel: 'Search by name',
+    serviceStarting:
+      'The service is starting. The first search can take up to a minute.',
     slogan: 'Search a name. Find a number.',
     waiting: 'Preparing search.',
     errors: {

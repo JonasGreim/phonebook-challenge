@@ -12,6 +12,7 @@ unchanged.
 - [Install and run](#install-and-run)
 - [Quality checks](#quality-checks)
 - [Architecture and behavior](#architecture-and-behavior)
+- [Render deployment](#render-deployment)
 - [Documentation and AI-assisted workflow](#documentation-and-ai-assisted-workflow)
 - [Known limitations](#known-limitations)
 - [Screenshot](#screenshot)
@@ -82,9 +83,8 @@ npm run check
 ```
 
 `npm run check` is the full automated chain: TypeScript typecheck, lint, formatting check, tests,
-and the Vite production build. The current refactored state was verified locally with all 30 tests
-passing. GitHub Actions runs the same command after `npm ci`; a new remote run has not been
-verified for this refactoring.
+and the Vite production build. GitHub Actions runs the same command after `npm ci`. Local and
+remote results must be recorded separately.
 
 `npm run build` creates static client assets in `dist/`. `npm run start:server` starts only the
 GraphQL server; it does not serve `dist/`. Hosting the built client and deploying the two
@@ -107,6 +107,21 @@ For design, API, and behavioral detail, see [the architecture](docs/architecture
 [requirements](docs/requirements.md), [UI/UX notes](docs/ui-ux.md), and
 [technical decisions](docs/decisions.md).
 
+## Render deployment
+
+[`render.yaml`](render.yaml) prepares two free Render services from `main`: a Vite static site
+and a Node.js GraphQL web service. Both use Render's `checksPass` auto-deploy trigger, so the
+existing GitHub Actions quality workflow must pass before deployment.
+
+During Blueprint setup, provide the Static Site's `VITE_GRAPHQL_URL` as the HTTPS URL assigned to
+the deployed backend. This public build-time value is intentionally not hardcoded: production has
+no localhost fallback. In the Render Dashboard, confirm `main` and **After CI Checks Pass** for
+both services. No deploy hook or repository credential is required.
+
+The free backend sleeps after 15 minutes without inbound traffic and can take about a minute to
+start for the next request. After three seconds, FindCall explains this neutrally in the selected
+language. It sends no keep-alive requests. No Render service or deployment URL is confirmed yet.
+
 ## Documentation and AI-assisted workflow
 
 [AGENTS.md](AGENTS.md) defines repository working rules: preserve original data and user changes,
@@ -120,8 +135,9 @@ results reviewable.
 
 ## Known limitations
 
-- There is no deployment configuration, static-asset server, authentication, database, or search
-  index.
+- There is no live deployment, authentication, database, or search index. Render configuration is
+  prepared, but creating public services requires account access and explicit authorization to
+  expose the supplied phonebook through the search API.
 - The phonebook is a small, immutable in-memory data set; larger or mutable data needs a different
   persistence and search strategy.
 - Clipboard support depends on the browser and context. Automated mocks cover its behavior, but a

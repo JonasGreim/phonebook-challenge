@@ -22,6 +22,11 @@ The client deliberately uses `fetch` rather than Apollo Client: one query does n
 client cache or another dependency. `AbortController` and a monotonically increasing request ID
 protect fast input and page changes from stale responses.
 
+Production reads the GraphQL endpoint from `VITE_GRAPHQL_URL` and never falls back to localhost;
+development alone uses the local endpoint when that variable is absent. The Render backend reads
+`PORT` and binds to `0.0.0.0`; its Apollo endpoint supports browser cross-origin requests. The
+phonebook stays server-only under `server/data/`, outside static assets and client imports.
+
 `tsconfig.app.json` and `tsconfig.server.json` check client and server separately with
 `strict: true`; root `tsconfig.json` joins both projects. The validated server boundary and the
 client's GraphQL-response check continue to treat data as `unknown` until its shape is proven.
@@ -37,6 +42,9 @@ translated logo subtitle to `FindCallLogo`, so it follows the selected or persis
 request protection. `useClipboardFeedback` owns Clipboard completion feedback and stale Clipboard
 operation protection. Pure unit tests remain next to their modules; the app-wide behavior test is
 in `src/integration/`, with shared setup in `src/test/`.
+
+After three seconds of a pending search, `usePhonebookSearch` exposes a translated free-service
+startup message. Request IDs and cleanup clear it when a request finishes or is superseded.
 
 `src/assets/findcall-mark.svg` is the single source for FindCall mark geometry. `FindCallLogo`
 loads it as a transparent page image, while `scripts/generate-favicon.mjs` wraps the same mark in
@@ -58,3 +66,6 @@ The single quality entry point is `npm run check`. The GitHub Actions workflow i
 [`../.github/workflows/quality.yml`](../.github/workflows/quality.yml) uses `npm ci` with
 `package-lock.json`, reads `.nvmrc`, and then runs the same command. Local and remote results are
 recorded separately.
+
+`render.yaml` prepares free static and web services from `main` with Render's `checksPass` trigger.
+Creating the services, supplying the public backend URL, and live verification require Render access.
