@@ -1,6 +1,7 @@
 import CheckIcon from '@mui/icons-material/Check';
 import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
 import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined';
+import SearchIcon from '@mui/icons-material/Search';
 import {
   Alert,
   Box,
@@ -70,15 +71,17 @@ export default function SearchResults({
       ? text.waiting
       : status === 'loading'
         ? text.loading
-        : status === 'success'
-          ? text.resultsCount(searchPage?.totalCount ?? 0)
-          : status === 'empty'
-            ? text.noResults
-            : '';
+        : '';
+  const headerMetadata =
+    status === 'success'
+      ? resultRange
+      : status === 'empty'
+        ? text.emptyResultsCount
+        : text.waiting;
 
   return (
     <>
-      {status !== 'initial' ? (
+      {status === 'waiting' || status === 'loading' || status === 'error' ? (
         <Box
           aria-atomic="true"
           aria-busy={status === 'loading'}
@@ -101,8 +104,17 @@ export default function SearchResults({
       ) : null}
 
       {searchPage &&
-      (status === 'success' || status === 'waiting' || status === 'loading') ? (
-        <Paper component="section" aria-label={text.results} elevation={0}>
+      (status === 'success' ||
+        status === 'empty' ||
+        status === 'waiting' ||
+        status === 'loading') ? (
+        <Paper
+          component="section"
+          aria-atomic={status === 'empty' ? 'true' : undefined}
+          aria-label={text.results}
+          aria-live={status === 'empty' ? 'polite' : undefined}
+          elevation={0}
+        >
           <Box
             sx={{
               alignItems: 'center',
@@ -118,7 +130,7 @@ export default function SearchResults({
               {text.results}
             </Typography>
             <Typography color="text.secondary" variant="body2">
-              {status === 'success' ? resultRange : text.waiting}
+              {headerMetadata}
             </Typography>
           </Box>
           {status === 'success' ? (
@@ -217,57 +229,100 @@ export default function SearchResults({
               ))}
             </List>
           ) : null}
-          <Box
-            sx={{
-              alignItems: { sm: 'center' },
-              display: 'flex',
-              flexDirection: { xs: 'column', sm: 'row' },
-              gap: 2,
-              justifyContent: 'space-between',
-              px: { xs: 2, sm: 3 },
-              py: 2,
-            }}
-          >
-            <FormControl size="small" sx={{ minWidth: 180 }}>
-              <InputLabel id="page-size-label">{text.rowsPerPage}</InputLabel>
-              <Select
-                id="page-size"
-                label={text.rowsPerPage}
-                labelId="page-size-label"
-                onChange={(event) => {
-                  const nextPageSize = Number(event.target.value);
-                  if (
-                    nextPageSize === 10 ||
-                    nextPageSize === 25 ||
-                    nextPageSize === 50
-                  ) {
-                    onPageSizeChange(nextPageSize);
-                  }
+          {status === 'empty' ? (
+            <List disablePadding>
+              <ListItem
+                sx={{
+                  alignItems: 'center',
+                  gap: 1.5,
+                  px: { xs: 2, sm: 3 },
+                  py: 1.5,
                 }}
-                value={pageSize}
               >
-                {PAGE_SIZES.map((size) => (
-                  <MenuItem key={size} value={size}>
-                    {size}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <Pagination
-              count={searchPage.totalPages}
-              getItemAriaLabel={(type, pageNumber) =>
-                type === 'previous'
-                  ? text.previousPage
-                  : type === 'next'
-                    ? text.nextPage
-                    : text.page(pageNumber ?? 1)
-              }
-              onChange={(_event, nextPage) => onPageChange(nextPage)}
-              page={page}
-              shape="rounded"
-              siblingCount={0}
-            />
-          </Box>
+                <Box
+                  aria-hidden="true"
+                  sx={{
+                    alignItems: 'center',
+                    bgcolor: 'primary.light',
+                    borderRadius: '50%',
+                    color: 'primary.main',
+                    display: 'flex',
+                    flexShrink: 0,
+                    height: 36,
+                    justifyContent: 'center',
+                    width: 36,
+                  }}
+                >
+                  <SearchIcon fontSize="small" />
+                </Box>
+                <ListItemText
+                  primary={text.noResults}
+                  secondary={text.noResultsHint}
+                  slotProps={{
+                    primary: {
+                      sx: { color: 'text.primary', fontWeight: 600 },
+                    },
+                    secondary: {
+                      sx: { color: 'text.secondary', mt: 0.25 },
+                    },
+                  }}
+                />
+              </ListItem>
+            </List>
+          ) : null}
+          {status !== 'empty' ? (
+            <Box
+              sx={{
+                alignItems: { sm: 'center' },
+                display: 'flex',
+                flexDirection: { xs: 'column', sm: 'row' },
+                gap: 2,
+                justifyContent: 'space-between',
+                px: { xs: 2, sm: 3 },
+                py: 2,
+              }}
+            >
+              <FormControl size="small" sx={{ minWidth: 180 }}>
+                <InputLabel id="page-size-label">{text.rowsPerPage}</InputLabel>
+                <Select
+                  id="page-size"
+                  label={text.rowsPerPage}
+                  labelId="page-size-label"
+                  onChange={(event) => {
+                    const nextPageSize = Number(event.target.value);
+                    if (
+                      nextPageSize === 10 ||
+                      nextPageSize === 25 ||
+                      nextPageSize === 50
+                    ) {
+                      onPageSizeChange(nextPageSize);
+                    }
+                  }}
+                  value={pageSize}
+                >
+                  {PAGE_SIZES.map((size) => (
+                    <MenuItem key={size} value={size}>
+                      {size}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <Pagination
+                count={searchPage.totalPages}
+                getItemAriaLabel={(type, pageNumber) =>
+                  type === 'previous'
+                    ? text.previousPage
+                    : type === 'next'
+                      ? text.nextPage
+                      : text.page(pageNumber ?? 1)
+                }
+                onChange={(_event, nextPage) => onPageChange(nextPage)}
+                page={page}
+                shape="rounded"
+                siblingCount={0}
+              />
+            </Box>
+          ) : null}
         </Paper>
       ) : null}
 
@@ -285,7 +340,7 @@ export default function SearchResults({
           '& .MuiAlert-root': {
             maxWidth: { sm: 480, xs: 'calc(100vw - 32px)' },
           },
-          bottom: { sm: 24, xs: 16 },
+          bottom: { sm: 72, xs: 88 },
         }}
       >
         {clipboardFeedback ? (

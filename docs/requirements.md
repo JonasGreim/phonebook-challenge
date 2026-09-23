@@ -41,8 +41,11 @@ the successful button briefly shows a translated checkmark without changing its 
 ## Empty result state
 
 Before a query or after clearing it, no result-state message or list is rendered. The search field
-and its label remain visible. Loading, no-result, and technical errors are only shown for an
-actual non-empty search, and clearing invalidates pending answers.
+and its label remain visible. After the latest accepted non-empty search returns zero matches, the
+results card shows its translated heading, a `0` count, and one neutral contact-row-shaped empty
+state with a search icon, name-weight message, and translated hint; it does not show pagination or
+a page-size selector. Loading and technical errors remain separate states, and clearing invalidates
+pending answers.
 
 ## Technical baseline and scope limits
 

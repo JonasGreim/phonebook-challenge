@@ -39,3 +39,16 @@
   generation for development and production builds.
 - Clipped generated favicon artwork to its circular bubble and enlarged the shared phone receiver
   while preserving the page logo's full magnifier handle and signal arcs.
+- Rendered accepted zero-match searches inside the neutral results card with translated guidance
+  and without pagination controls or duplicate status messages.
+- Refined the empty-result row to match contact spacing and typography, with a light-blue search
+  icon and concise translated guidance.
+- Added a responsive author footer with a verified FindCall repository link and keyboard-visible
+  focus treatment.
+- Refined the footer into distinct author-profile and FindCall project-link groups with translated
+  GitHub and LinkedIn labels, tooltips, and responsive stacking.
+- Aligned the FindCall project link and author-profile group with the header container, normalized
+  footer typography and icon weight, and made the project group first on narrow screens.
+- Simplified the footer to one centered author-and-profile group with compact icon targets and
+  preserved localized personal-profile accessibility.
+- Kept the compact author and profile links aligned in one centered row on narrow screens.

@@ -28,6 +28,15 @@ The compact header contains the wordmark and a visible DE/EN language switch, wi
 navigation. The selection persists; query, page size, page, and results remain on language
 change. A labelled icon button clears the query.
 
+A restrained semantic footer follows the content in normal document flow. On short pages, the
+main layout expands so it reaches the viewport bottom; on longer pages, it follows the results.
+One centered group combines the dynamic author line with tightly grouped GitHub and LinkedIn
+profile icons. It uses 14 px muted blue-gray typography, optically balanced 20 px icons, a 12 px
+author-to-profile gap, 32 px icon targets, and 4 px between targets. The compact author-and-profile
+group remains centered on one line at narrow widths. Links use translated labels and tooltips,
+restrained theme contrast, primary-blue hover, and the theme focus treatment for keyboard
+navigation. Clipboard feedback reserves space above it.
+
 Results use a compact list with a translated range such as “1–10 of 34 results”. Below it are a
 10/25/50 page-size selector and keyboard-accessible pagination. On narrow views, those controls
 stack with adequate spacing. Each contact also has a copy icon button with a tooltip and
@@ -44,7 +53,9 @@ result surface. Highlighting does not change the name's text or accessible name.
 - Copying: a bottom Snackbar reports success or a clear failure without shifting content. Success
   uses the theme's green status color; errors use the white FindCall surface with a blue accent.
   The copied button briefly shows a same-size check icon; numbers remain visible.
-- No results: an unambiguous non-technical message.
+- No results: the standard results card shows a translated `0` count and one contact-row-shaped,
+  neutral empty state: a light-blue search icon circle, a name-weight message, and a muted hint.
+  It uses one polite announcement and omits pagination and the page-size selector.
 - Error: a highlighted error instead of an empty result list.
 
 Changing a query immediately hides stale results. Clearing the field ignores pending answers and

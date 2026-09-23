@@ -71,6 +71,23 @@ describe('App', () => {
         'Gib einen Namen ein, um das Telefonbuch zu durchsuchen.',
       ),
     ).not.toBeInTheDocument();
+    const authorText = screen.getByText(
+      `© ${new Date().getFullYear()} Jonas Greim`,
+    );
+    expect(authorText).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', {
+        name: 'GitHub-Profil von Jonas Greim',
+      }),
+    ).toHaveAttribute('href', 'https://github.com/JonasGreim');
+    expect(
+      screen.getByRole('link', {
+        name: 'LinkedIn-Profil von Jonas Greim',
+      }),
+    ).toHaveAttribute('href', 'http://www.linkedin.com/in/jonas-greim-dev');
+    expect(
+      screen.queryByRole('link', { name: 'FindCall auf GitHub' }),
+    ).not.toBeInTheDocument();
   });
 
   it('wartet vor der Suche und zeigt Treffer nach der Serverantwort', async () => {
@@ -98,6 +115,9 @@ describe('App', () => {
     );
     expect(getRenderedContactName('Anna Muster')).toBeInTheDocument();
     expect(screen.getByText('0123')).toBeInTheDocument();
+    expect(
+      screen.getByText(`© ${new Date().getFullYear()} Jonas Greim`),
+    ).toBeInTheDocument();
   });
 
   it('ignores a late response and clears results immediately', async () => {
@@ -156,6 +176,72 @@ describe('App', () => {
       screen.queryByText(
         'Gib einen Namen ein, um das Telefonbuch zu durchsuchen.',
       ),
+    ).not.toBeInTheDocument();
+  });
+
+  it('renders an accepted empty search inside the results card and clears it', async () => {
+    mockedSearchContacts
+      .mockResolvedValueOnce(
+        createSearchPage([
+          { id: 'contact-1', name: 'Matching Contact', phone: '0101' },
+        ]),
+      )
+      .mockResolvedValueOnce(createSearchPage([]));
+    render(<App />);
+    const input = screen.getByLabelText('Name suchen');
+
+    fireEvent.change(input, { target: { value: 'matching' } });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(280);
+    });
+    expect(getRenderedContactName('Matching Contact')).toBeInTheDocument();
+    expect(screen.getByRole('combobox')).toBeInTheDocument();
+
+    fireEvent.change(input, { target: { value: 'missing' } });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(280);
+    });
+
+    const emptyResults = screen.getByRole('region', {
+      name: 'Suchergebnisse',
+    });
+    expect(emptyResults).toHaveAttribute('aria-live', 'polite');
+    expect(screen.getByText('0 Treffer')).toBeInTheDocument();
+    expect(
+      screen.getByText(`© ${new Date().getFullYear()} Jonas Greim`),
+    ).toBeInTheDocument();
+    expect(
+      screen.getAllByText('Keine passenden Kontakte gefunden'),
+    ).toHaveLength(1);
+    expect(
+      screen.getByText(
+        'Versuche einen anderen Namen oder einen kürzeren Suchbegriff.',
+      ),
+    ).toBeInTheDocument();
+    expect(screen.queryByRole('combobox')).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Seite 1' }),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByText('Matching Contact')).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Englisch' }));
+    expect(
+      screen.getByRole('region', { name: 'Search results' }),
+    ).toHaveAttribute('aria-live', 'polite');
+    expect(screen.getByText('0 results')).toBeInTheDocument();
+    expect(screen.getAllByText('No matching contacts found')).toHaveLength(1);
+    expect(
+      screen.getByText('Try another name or a shorter search term.'),
+    ).toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText('Search by name'), {
+      target: { value: '   ' },
+    });
+    expect(
+      screen.queryByRole('region', { name: 'Search results' }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText('No matching contacts found'),
     ).not.toBeInTheDocument();
   });
 
@@ -234,6 +320,19 @@ describe('App', () => {
     expect(document.documentElement.lang).toBe('en');
     expect(document.title).toBe('FindCall – Find a phone number');
     expect(window.localStorage.getItem('findcall-locale')).toBe('en');
+    expect(
+      screen.getByRole('link', {
+        name: 'Jonas Greim’s GitHub profile',
+      }),
+    ).toHaveAttribute('href', 'https://github.com/JonasGreim');
+    expect(
+      screen.getByRole('link', {
+        name: 'Jonas Greim’s LinkedIn profile',
+      }),
+    ).toHaveAttribute('href', 'http://www.linkedin.com/in/jonas-greim-dev');
+    expect(
+      screen.queryByRole('link', { name: 'FindCall on GitHub' }),
+    ).not.toBeInTheDocument();
     expect(
       screen.getByRole('link', { name: 'FindCall – back to home' }),
     ).toHaveTextContent('Search a name. Find a number.');

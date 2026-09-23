@@ -1,37 +1,42 @@
-# Current task: Refine favicon clipping and phone proportions
+# Current task: Simplify and center the author footer
 
 ## Goal
 
-Give the generated favicon a clean circular silhouette and improve receiver recognition while
-preserving the shared FindCall SVG workflow and the page logo's full magnifier handle.
+Create a compact, centered footer focused only on Jonas Greim's authorship and personal profiles.
 
 ## Scope
 
-Clip only generated favicon artwork to its white circle, enlarge and rebalance the shared receiver
-without changing colors or signal arcs, regenerate deterministically, and preserve locale, layout,
-accessibility, and unrelated application behavior.
+Remove only the footer's project repository link, retaining repository references elsewhere. Keep
+the dynamic year, confirmed profile URLs, translated accessible names/tooltips, and external-link
+behaviour. Center one author-and-profile group, use 14 px muted blue-gray text, 20 px icons, a
+12 px author-to-profile gap, 32 px icon targets with 4 px between them, a one-line centered layout
+at narrow widths, focused tests, UI/UX documentation, status, and the Changelog. Preserve normal
+document flow.
 
 ## Acceptance checks
 
-- The generated favicon has transparent corners and clipped artwork at the white circle boundary.
-- The receiver is 12% larger, remains visually separated from the ring and signal arcs, and uses
-  the existing colors.
-- The page logo retains its full handle, dimensions, home-link label, responsive wordmark, and
-  translated subtitle.
-- Generation is deterministic, automated checks pass, and browser visual checks are recorded
-  separately.
+- The footer contains only the dynamic copyright/author text and verified GitHub and LinkedIn
+  profile links in one centered group.
+- Text and icons align cleanly and remain in one centered row at narrow widths; profile targets
+  remain adjacent and non-overlapping.
+- Both links use balanced 20 px icons, 32 px targets with a 4 px gap, primary-blue hover, and
+  clear focus treatment.
+- Translated accessible names and tooltips update with locale, decorative icons are hidden from
+  assistive technology, and Clipboard feedback reserves space above the footer.
+- Focused integration coverage and configured automated checks pass; browser checks are separate.
 
 ## Status and next step
 
-Implemented: `findcall-mark.svg` enlarges the receiver by 12% and shifts it slightly down and
-left, leaving the signal arcs unchanged. The favicon generator wraps only derived artwork in a
-circle `clipPath`, while the page logo continues to load the full transparent source mark.
+Implemented: `ProjectFooter` now contains only a centered dynamic author line and confirmed
+GitHub/LinkedIn profile links. The repository link and its translation entries were removed only
+from the footer. The group uses muted 14 px text, 20 px icons, 12 px author-to-profile spacing,
+32 px profile targets, and 4 px between targets. On narrow screens, the compact author/profile
+group remains centered on one line.
 
-Verification passed: repeated generation produced the same SHA-256 output, the generator check
-passed, and `npm run check` passed with typecheck, lint, format check, 30 tests, and the production
-build. The build emitted the known chunk-size warning.
+Verification passed: focused integration coverage passed with 15 tests. `npm run check` passed
+with typecheck, lint, format check, 31 tests, and the production build. The known build chunk-size
+warning (522.39 kB / 163.71 kB gzip) is not a failure.
 
-Browser visual verification could not run because no browser surface is available in this
-environment. Inspect the page mark at 44 px and the favicon at 16 and 32 px on light and dark
-tabs when a browser is available; verify clipping, receiver spacing, and favicon loading after a
-cache-bypassing reload.
+Browser verification remains pending because no browser surface is available in this environment.
+When available, verify short and long pages, narrow one-line layout, browser zoom, tooltips,
+keyboard focus, localized labels, and Snackbar clearance.
