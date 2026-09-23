@@ -5,7 +5,7 @@
 - Names are searched as free text while typing, without case sensitivity.
 - Results show the complete name and phone number.
 - The interface remains usable on small and large screens.
-- `telefonbuch.json` is the unchanged server-side source of data.
+- `server/data/telefonbuch.json` is the byte-identical, server-side source of data.
 - The client queries data at runtime through GraphQL.
 
 ## Agreed behavior

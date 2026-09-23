@@ -2,7 +2,7 @@
 
 ```text
 React + Material UI (TypeScript)  -- POST / GraphQL -->  Apollo Server (TypeScript)
-                                                          --> telefonbuch.json
+                                                          --> server/data/telefonbuch.json
                                                               (loaded and validated once)
 ```
 
@@ -30,6 +30,12 @@ client's GraphQL-response check continue to treat data as `unknown` until its sh
 `App` stores the language under `findcall-locale` in local storage and updates
 `document.documentElement.lang` and the page title. Locale state is separate from the query,
 page size, page, and results, so those values survive a language switch.
+
+`App` composes the theme, locale, search field, `AppHeader`, and `SearchResults`. The
+`usePhonebookSearch` hook owns debounce, cancellation, search response, pagination, and stale
+request protection. `useClipboardFeedback` owns Clipboard completion feedback and stale Clipboard
+operation protection. Pure unit tests remain next to their modules; the app-wide behavior test is
+in `src/integration/`, with shared setup in `src/test/`.
 
 `src/highlight.ts` splits a displayed name into literal, non-overlapping matching and non-matching
 text parts without regular expressions or HTML injection. `App` stores the query associated with

@@ -6,7 +6,7 @@ import { loadPhonebook } from './phonebook.js';
 import { createResolvers, typeDefs } from './schema.js';
 
 const currentDirectory = path.dirname(fileURLToPath(import.meta.url));
-const phonebookPath = path.join(currentDirectory, '..', 'telefonbuch.json');
+const phonebookPath = path.join(currentDirectory, 'data', 'telefonbuch.json');
 const contacts = await loadPhonebook(phonebookPath);
 const configuredPort = Number(process.env.PORT);
 const port =

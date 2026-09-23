@@ -56,6 +56,15 @@ result list and its controls from moving. Success uses one polite status message
 same-size check icon on the relevant button; errors use an alert. A monotonically increasing
 clipboard operation ID prevents late earlier operations from replacing newer feedback.
 
+## Focused application structure
+
+The app has two cohesive stateful hooks rather than a broad utilities layer: one for search and
+pagination, one for Clipboard feedback. `AppHeader` and `SearchResults` represent meaningful page
+regions, while `App` remains the composition point. Pure logic tests stay adjacent to their
+modules; the existing application behavior test is grouped as an integration test. The original
+phonebook is stored under `server/data/` so its server-only boundary is explicit without entering
+the client bundle.
+
 ## Rank before pagination and highlight from accepted state
 
 Ranking the complete server-side match set before pagination keeps page totals and membership

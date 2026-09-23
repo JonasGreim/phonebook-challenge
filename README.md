@@ -1,8 +1,9 @@
 # FindCall — Phonebook Coding Challenge
 
 FindCall is a small, accessible phonebook search application. A React client queries an Apollo
-GraphQL server at runtime; the server validates and keeps the provided `telefonbuch.json` data
-in memory. The project intentionally keeps the source data unchanged.
+GraphQL server at runtime; the server validates and keeps the provided
+`server/data/telefonbuch.json` data in memory. The project intentionally keeps the source data
+unchanged.
 
 ## Contents
 
@@ -76,9 +77,9 @@ services are deliberately outside this challenge.
 ## Architecture and behavior
 
 The Vite client never ships the phonebook file. At server startup, Apollo loads and validates
-`telefonbuch.json`, assigns a stable `contact-<index>` ID to each entry, and keeps the validated
-records in memory. For a non-empty search, it filters the complete phonebook, sorts by name and
-then ID, and returns the requested page with totals.
+`server/data/telefonbuch.json`, assigns a stable `contact-<index>` ID to each entry, and keeps the
+validated records in memory. For a non-empty search, it filters the complete phonebook, sorts by
+name and then ID, and returns the requested page with totals.
 
 An empty or whitespace-only input does not issue a search and shows no results. Phone numbers
 are displayed and copied as their original strings; they are not searched. The copy action uses

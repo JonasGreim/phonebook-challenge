@@ -2,7 +2,8 @@
 
 ## Scope and language
 
-- Keep `telefonbuch.json` unchanged and never expose contact data in logs or documentation.
+- Keep `server/data/telefonbuch.json` byte-identical and never expose contact data in logs or
+  documentation. It is server-only source data, never a public asset or client import.
 - Write code, code comments, and all project-maintained documentation in English. Keep the UI German/English through the existing language architecture; do not create a competing translation mechanism. Explanations to the user may be German.
 - Preserve working search behavior, GraphQL integration, stable contact IDs, and handling of duplicate names unless a task explicitly changes them.
 

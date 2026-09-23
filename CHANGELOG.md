@@ -29,3 +29,7 @@
   ranking, special characters, multiple matches, and stale search responses.
 - Removed the empty-query result prompt and moved copy feedback to a non-modal bottom Snackbar
   with temporary translated button confirmation and stale-operation protection.
+- Split application composition, search/pagination state, Clipboard feedback, header, and result
+  presentation into focused modules; grouped the app-wide behavior test as an integration test.
+- Moved the byte-identical phonebook source to `server/data/telefonbuch.json` to make its
+  server-only boundary explicit.

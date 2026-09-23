@@ -6,16 +6,16 @@ import {
   screen,
 } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import App from './App.js';
+import App from '../App.js';
 import {
   SearchError,
   searchContacts,
   type Contact,
   type SearchPage,
-} from './api.js';
+} from '../api.js';
 
-vi.mock('./api.js', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('./api.js')>();
+vi.mock('../api.js', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../api.js')>();
   return { ...actual, searchContacts: vi.fn() };
 });
 

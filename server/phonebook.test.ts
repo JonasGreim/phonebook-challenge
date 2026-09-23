@@ -17,7 +17,9 @@ const syntheticContacts: Contact[] = [
 
 describe('Telefonbuchdaten', () => {
   it('lädt die bereitgestellte Datei und ergänzt nur serverseitige IDs', async () => {
-    const contacts = await loadPhonebook(path.resolve('telefonbuch.json'));
+    const contacts = await loadPhonebook(
+      path.resolve('server/data/telefonbuch.json'),
+    );
 
     expect(contacts).toHaveLength(120);
     expect(contacts.every((contact) => /^contact-\d+$/.test(contact.id))).toBe(
