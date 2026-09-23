@@ -29,7 +29,8 @@ client's GraphQL-response check continue to treat data as `unknown` until its sh
 `src/i18n.ts` is the central typed source for German and English UI text and search error codes.
 `App` stores the language under `findcall-locale` in local storage and updates
 `document.documentElement.lang` and the page title. Locale state is separate from the query,
-page size, page, and results, so those values survive a language switch.
+page size, page, and results, so those values survive a language switch. `AppHeader` passes the
+translated logo subtitle to `FindCallLogo`, so it follows the selected or persisted locale too.
 
 `App` composes the theme, locale, search field, `AppHeader`, and `SearchResults`. The
 `usePhonebookSearch` hook owns debounce, cancellation, search response, pagination, and stale

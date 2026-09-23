@@ -234,6 +234,9 @@ describe('App', () => {
     expect(document.documentElement.lang).toBe('en');
     expect(document.title).toBe('FindCall – Find a phone number');
     expect(window.localStorage.getItem('findcall-locale')).toBe('en');
+    expect(
+      screen.getByRole('link', { name: 'FindCall – back to home' }),
+    ).toHaveTextContent('Search a name. Find a number.');
     expect(screen.getByLabelText('Search by name')).toHaveValue('anna');
     expect(screen.getByText('Search results')).toBeInTheDocument();
     expect(getRenderedContactName('Anna Muster')).toBeInTheDocument();
@@ -245,6 +248,9 @@ describe('App', () => {
 
     expect(screen.getByLabelText('Search by name')).toBeInTheDocument();
     expect(document.documentElement.lang).toBe('en');
+    expect(
+      screen.getByRole('link', { name: 'FindCall – back to home' }),
+    ).toHaveTextContent('Search a name. Find a number.');
   });
 
   it('resets the page for a new query and ignores an older page response', async () => {

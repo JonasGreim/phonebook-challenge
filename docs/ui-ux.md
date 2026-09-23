@@ -10,8 +10,10 @@ typography, radii, focus treatment, and component variants live in `src/theme.ts
 
 The type stack is Inter with robust system fallbacks. Inter is not downloaded because no local
 font asset exists, so the UI stays readable without an external request. The custom SVG combines
-a dark-blue magnifier and blue handset. The wordmark hides on small screens while its surrounding
-link remains accessible; the simplified mark is also the favicon.
+a dark-blue magnifier and blue handset. Its subtitle follows the selected German or English UI
+locale. The wordmark hides on small screens while its surrounding link remains accessible; the
+simplified mark is also the favicon. The favicon adds a white circular bubble around the existing
+mark, preserving inner spacing and contrast on light and dark browser tabs.
 
 ## Layout
 

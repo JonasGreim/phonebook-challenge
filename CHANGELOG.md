@@ -33,3 +33,5 @@
   presentation into focused modules; grouped the app-wide behavior test as an integration test.
 - Moved the byte-identical phonebook source to `server/data/telefonbuch.json` to make its
   server-only boundary explicit.
+- Localized the logo subtitle through the existing DE/EN translations and added a white favicon
+  bubble for contrast on light and dark browser tabs.

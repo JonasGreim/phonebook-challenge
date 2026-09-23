@@ -28,7 +28,7 @@ export default function AppHeader({ locale, onLocaleChange }: AppHeaderProps) {
           minHeight: 72,
         }}
       >
-        <FindCallLogo homeLabel={text.homeLabel} />
+        <FindCallLogo homeLabel={text.homeLabel} subtitle={text.logoSubtitle} />
         <ButtonGroup
           aria-label={text.languageLabel}
           size="small"

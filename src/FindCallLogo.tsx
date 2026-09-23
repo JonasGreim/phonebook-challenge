@@ -1,7 +1,11 @@
 import { Box } from '@mui/material';
 
 type MarkProps = { title?: string };
-type FindCallLogoProps = { compact?: boolean; homeLabel: string };
+type FindCallLogoProps = {
+  compact?: boolean;
+  homeLabel: string;
+  subtitle: string;
+};
 
 function Mark({ title }: MarkProps) {
   return (
@@ -45,6 +49,7 @@ function Mark({ title }: MarkProps) {
 export default function FindCallLogo({
   compact = false,
   homeLabel,
+  subtitle,
 }: FindCallLogoProps) {
   return (
     <Box
@@ -98,7 +103,7 @@ export default function FindCallLogo({
               whiteSpace: 'nowrap',
             }}
           >
-            Search a name. Find a number.
+            {subtitle}
           </Box>
         </Box>
       )}

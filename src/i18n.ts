@@ -19,6 +19,7 @@ type Translations = {
   homeLabel: string;
   languageLabel: string;
   loading: string;
+  logoSubtitle: string;
   noResults: string;
   nextPage: string;
   page: (page: number) => string;
@@ -52,6 +53,7 @@ export const translations: Record<Locale, Translations> = {
     homeLabel: 'FindCall – zur Startseite',
     languageLabel: 'Sprache',
     loading: 'Telefonbuch wird durchsucht.',
+    logoSubtitle: 'Suche einen Namen. Finde eine Nummer.',
     noResults: 'Keine passenden Kontakte gefunden.',
     nextPage: 'Nächste Seite',
     page: (page) => `Seite ${page}`,
@@ -86,6 +88,7 @@ export const translations: Record<Locale, Translations> = {
     homeLabel: 'FindCall – back to home',
     languageLabel: 'Language',
     loading: 'Searching the phonebook.',
+    logoSubtitle: 'Search a name. Find a number.',
     noResults: 'No matching contacts found.',
     nextPage: 'Next page',
     page: (page) => `Page ${page}`,
