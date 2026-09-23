@@ -66,9 +66,10 @@ npm run build
 npm run check
 ```
 
-`npm run check` is the verified full automated chain: TypeScript typecheck, lint, formatting
-check, tests, and the Vite production build. The user confirmed a successful run with 21 tests
-for the committed step 5 state; GitHub Actions runs the same command after `npm ci`.
+`npm run check` is the full automated chain: TypeScript typecheck, lint, formatting check, tests,
+and the Vite production build. The current refactored state was verified locally with all 30 tests
+passing. GitHub Actions runs the same command after `npm ci`; a new remote run has not been
+verified for this refactoring.
 
 `npm run build` creates static client assets in `dist/`. `npm run start:server` starts only the
 GraphQL server; it does not serve `dist/`. Hosting the built client and deploying the two
@@ -109,7 +110,8 @@ results reviewable.
 - The phonebook is a small, immutable in-memory data set; larger or mutable data needs a different
   persistence and search strategy.
 - Clipboard support depends on the browser and context. Automated mocks cover its behavior, but a
-  real browser copy and keyboard check remains to be performed for step 5.
+  real browser copy, denied/unavailable access, and keyboard check remains to be performed for
+  the current refactored state.
 - The last confirmed production build emitted Vite's chunk-size warning for a JavaScript chunk of
   about 509 kB (about 160 kB gzip). This is an optimization opportunity—such as reviewing code
   splitting—rather than a reason to raise the warning threshold in this documentation task.

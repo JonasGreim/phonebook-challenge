@@ -1,4 +1,4 @@
-# Current task: Task 3 - Targeted project structure improvement
+# Completed task: Task 3 - Targeted project structure improvement
 
 ## Goal
 
@@ -35,26 +35,24 @@ before and after the move. The data file has no client import and is outside `pu
 
 ## Verification
 
-- `git diff --check` passed.
 - Corrected the `Snackbar` child fallback from `null` to `undefined`; Material UI's type contract
   accepts only a React element or `undefined`.
-- Targeted Vitest invocation could not start: Node.js is unavailable (`/usr/bin/env: ‘node’: No
-  such file or directory`).
-- `npm run check` could not start because npm is unavailable (`npm: command not found`).
-- Server startup/data retrieval and browser checks for search, pagination, language switching,
-  Clipboard permissions, and keyboard operation could not run without Node.js and a running app.
+- `npm run check` passed with Node.js 22.22.3: typecheck, lint, format check, 30 tests, and the
+  production build all succeeded. The build emitted the known chunk-size warning only.
+- The server started successfully on port 4001 (port 4000 was already occupied). A GraphQL search
+  query returned valid pagination metadata from the moved data source.
+- The Vite client entry responded successfully on port 5174.
+- `git diff --check` passed. The data SHA-256 remains
+  `1dec52b259794d0b5ed13f9a6475e9ade3668dcd95a41cfcf3b3f9f818cf9186`.
 
-## Required local verification
+## Open manual verification
 
-1. Run `npm ci` with Node.js 22.22.2+ and npm 10+.
-2. Run `npm run check`.
-3. Run `npm run dev`, search across pages, switch language, and use the page-size control by
-   keyboard.
-4. In a secure browser context, copy a phone number with keyboard and pointer input; also verify
-   unavailable or denied Clipboard feedback where feasible.
-5. Run `npm run start:server` and issue a GraphQL `searchPhonebook` query to confirm that the
-   server loads `server/data/telefonbuch.json`.
+No browser surface was available in this environment. Search, highlighting, pagination, page-size
+selection, language switching, keyboard interaction, real Clipboard copying, and denied or
+unavailable Clipboard behavior were therefore not browser-verified. Automated integration tests
+cover the relevant application states, but do not replace this real-browser verification.
 
 ## Next step
 
-Await user review. The fixed-English logo subtitle remains a separate i18n follow-up.
+Task implementation is complete. The fixed-English logo subtitle remains a separate i18n
+follow-up; perform the open browser verification when a browser surface is available.

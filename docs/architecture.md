@@ -38,9 +38,10 @@ operation protection. Pure unit tests remain next to their modules; the app-wide
 in `src/integration/`, with shared setup in `src/test/`.
 
 `src/highlight.ts` splits a displayed name into literal, non-overlapping matching and non-matching
-text parts without regular expressions or HTML injection. `App` stores the query associated with
-the accepted server response and renders matching parts as semantic `mark` elements; a later input
-or a rejected stale response cannot alter the highlights for visible results.
+text parts without regular expressions or HTML injection. `usePhonebookSearch` stores the query
+associated with the accepted server response, and `SearchResults` renders matching parts as
+semantic `mark` elements; a later input or a rejected stale response cannot alter the highlights
+for visible results.
 
 Copying stays entirely in the client. It passes `contact.phone` unchanged to
 `navigator.clipboard.writeText`; only a resolved promise triggers success feedback. Missing or
