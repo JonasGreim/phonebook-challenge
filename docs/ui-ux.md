@@ -11,9 +11,12 @@ typography, radii, focus treatment, and component variants live in `src/theme.ts
 The type stack is Inter with robust system fallbacks. Inter is not downloaded because no local
 font asset exists, so the UI stays readable without an external request. The custom SVG combines
 a dark-blue magnifier and blue handset. Its subtitle follows the selected German or English UI
-locale. The wordmark hides on small screens while its surrounding link remains accessible; the
-simplified mark is also the favicon. The favicon adds a white circular bubble around the existing
-mark, preserving inner spacing and contrast on light and dark browser tabs.
+locale. The wordmark hides on small screens while its surrounding link remains accessible. The
+transparent page mark and favicon share `src/assets/findcall-mark.svg` geometry. The generated
+favicon adds a white circular bubble around that mark, preserving inner spacing and contrast on
+light and dark browser tabs. Its artwork is clipped to the bubble, while the transparent page logo
+retains the full magnifier handle. The receiver is slightly enlarged and offset for recognition
+without changing the signal arcs; the generated favicon must not be edited manually.
 
 ## Layout
 

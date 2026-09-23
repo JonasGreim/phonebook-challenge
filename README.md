@@ -27,6 +27,8 @@ unchanged.
 - Responsive, keyboard-accessible pagination and page-size selection.
 - An accessible copy action for each phone number, with translated success and failure feedback.
   It preserves the number's original text, including leading zeroes and formatting.
+- One shared SVG mark for the page logo and generated favicon; the logo subtitle follows the
+  selected German or English locale.
 - Runtime validation of the JSON data and GraphQL responses, plus strict TypeScript.
 
 ## Tech stack and prerequisites
@@ -57,6 +59,19 @@ The client is available at `http://localhost:5173`; the GraphQL server listens o
 `http://localhost:4000`.
 
 For separate terminals, use `npm run dev:client` and `npm run dev:server`.
+
+### Regenerate the favicon
+
+The page logo and favicon use `src/assets/findcall-mark.svg` as their single geometry source.
+After editing that source, regenerate the derived favicon explicitly:
+
+```bash
+npm run generate:favicon
+```
+
+`npm run dev`, `npm run dev:client`, and `npm run build` regenerate it automatically. Do not edit
+`public/favicon.svg` manually. Use `npm run generate:favicon:check` to confirm it matches the
+source.
 
 ### Tests and production build
 

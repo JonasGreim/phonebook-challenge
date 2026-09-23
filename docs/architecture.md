@@ -38,6 +38,12 @@ request protection. `useClipboardFeedback` owns Clipboard completion feedback an
 operation protection. Pure unit tests remain next to their modules; the app-wide behavior test is
 in `src/integration/`, with shared setup in `src/test/`.
 
+`src/assets/findcall-mark.svg` is the single source for FindCall mark geometry. `FindCallLogo`
+loads it as a transparent page image, while `scripts/generate-favicon.mjs` wraps the same mark in
+a padded white circle and clips artwork to that circle for `public/favicon.svg`. Development,
+direct client startup, and production build generation run that script; the generated favicon is
+not a manual source file.
+
 `src/highlight.ts` splits a displayed name into literal, non-overlapping matching and non-matching
 text parts without regular expressions or HTML injection. `usePhonebookSearch` stores the query
 associated with the accepted server response, and `SearchResults` renders matching parts as

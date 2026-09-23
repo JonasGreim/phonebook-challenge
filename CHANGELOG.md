@@ -35,3 +35,7 @@
   server-only boundary explicit.
 - Localized the logo subtitle through the existing DE/EN translations and added a white favicon
   bubble for contrast on light and dark browser tabs.
+- Consolidated page-logo and favicon geometry in one SVG source and added deterministic favicon
+  generation for development and production builds.
+- Clipped generated favicon artwork to its circular bubble and enlarged the shared phone receiver
+  while preserving the page logo's full magnifier handle and signal arcs.

@@ -1,33 +1,37 @@
-# Current task: Localize logo subtitle and improve favicon contrast
+# Current task: Refine favicon clipping and phone proportions
 
 ## Goal
 
-Connect the FindCall logo subtitle to the existing German/English translations and make the
-favicon recognizable on light and dark browser tabs without changing the page logo layout.
+Give the generated favicon a clean circular silhouette and improve receiver recognition while
+preserving the shared FindCall SVG workflow and the page logo's full magnifier handle.
 
 ## Scope
 
-Add the two approved subtitle translations, pass the selected translation through the existing
-header and logo components, add a white SVG favicon bubble, add focused behavior coverage, and
-update affected documentation and the Changelog. Do not change search, data, GraphQL, branding
-colors, or component structure.
+Clip only generated favicon artwork to its white circle, enlarge and rebalance the shared receiver
+without changing colors or signal arcs, regenerate deterministically, and preserve locale, layout,
+accessibility, and unrelated application behavior.
 
 ## Acceptance checks
 
-- Switching locale and loading a persisted locale changes the logo subtitle.
-- The page logo keeps its dimensions and wordmark layout.
-- The favicon retains the existing mark with a white circular background and inner spacing.
-- Relevant automated checks pass; browser-specific visual checks are recorded separately.
+- The generated favicon has transparent corners and clipped artwork at the white circle boundary.
+- The receiver is 12% larger, remains visually separated from the ring and signal arcs, and uses
+  the existing colors.
+- The page logo retains its full handle, dimensions, home-link label, responsive wordmark, and
+  translated subtitle.
+- Generation is deterministic, automated checks pass, and browser visual checks are recorded
+  separately.
 
 ## Status and next step
 
-Implemented: `logoSubtitle` is translated through the existing locale record and passed from
-`AppHeader` to `FindCallLogo`; the favicon retains its mark inside a white circular bubble.
-The targeted integration test passed (14 tests), and `npm run check` passed with typecheck, lint,
-format check, 30 tests, and the production build. The known build chunk-size warning remains.
+Implemented: `findcall-mark.svg` enlarges the receiver by 12% and shifts it slightly down and
+left, leaving the signal arcs unchanged. The favicon generator wraps only derived artwork in a
+circle `clipPath`, while the page logo continues to load the full transparent source mark.
 
-Browser visual verification could not run: the available computer-use environment has no browser
-surface, and its in-app browser is unavailable. The page logo layout, favicon readability on light
-and dark tabs, live locale switch, persisted-locale reload, and keyboard interaction therefore
-still require a manual browser check. No application behavior other than the requested subtitle
-and favicon presentation was changed.
+Verification passed: repeated generation produced the same SHA-256 output, the generator check
+passed, and `npm run check` passed with typecheck, lint, format check, 30 tests, and the production
+build. The build emitted the known chunk-size warning.
+
+Browser visual verification could not run because no browser surface is available in this
+environment. Inspect the page mark at 44 px and the favicon at 16 and 32 px on light and dark
+tabs when a browser is available; verify clipping, receiver spacing, and favicon loading after a
+cache-bypassing reload.

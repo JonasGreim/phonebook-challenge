@@ -4,6 +4,8 @@
 
 - Keep `server/data/telefonbuch.json` byte-identical and never expose contact data in logs or
   documentation. It is server-only source data, never a public asset or client import.
+- Maintain FindCall mark geometry only in `src/assets/findcall-mark.svg`; regenerate the derived
+  `public/favicon.svg` with `npm run generate:favicon` instead of editing it manually.
 - Write code, code comments, and all project-maintained documentation in English. Keep the UI German/English through the existing language architecture; do not create a competing translation mechanism. Explanations to the user may be German.
 - Preserve working search behavior, GraphQL integration, stable contact IDs, and handling of duplicate names unless a task explicitly changes them.
 

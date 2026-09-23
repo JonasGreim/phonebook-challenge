@@ -9,15 +9,17 @@
   },
   "scripts": {
     "dev": "concurrently -k \"npm:dev:client\" \"npm:dev:server\"",
-    "dev:client": "vite",
+    "dev:client": "npm run generate:favicon && vite",
     "dev:server": "tsx watch server/index.ts",
     "start:server": "tsx server/index.ts",
     "typecheck": "tsc -b",
     "lint": "eslint .",
     "format": "prettier --write \"src/**/*.{ts,tsx}\" \"server/**/*.ts\" package.json tsconfig.json tsconfig.app.json tsconfig.server.json vite.config.ts eslint.config.js .prettierrc.json",
     "format:check": "prettier --check \"src/**/*.{ts,tsx}\" \"server/**/*.ts\" package.json tsconfig.json tsconfig.app.json tsconfig.server.json vite.config.ts eslint.config.js .prettierrc.json",
+    "generate:favicon": "node scripts/generate-favicon.mjs",
+    "generate:favicon:check": "node scripts/generate-favicon.mjs --check",
     "check": "npm run typecheck && npm run lint && npm run format:check && npm test && npm run build",
-    "build": "vite build",
+    "build": "npm run generate:favicon && vite build",
     "test": "vitest run"
   },
   "dependencies": {

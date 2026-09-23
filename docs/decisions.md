@@ -65,6 +65,13 @@ modules; the existing application behavior test is grouped as an integration tes
 phonebook is stored under `server/data/` so its server-only boundary is explicit without entering
 the client bundle.
 
+## Single FindCall mark source
+
+The page logo and favicon share one SVG geometry source. The page keeps the transparent mark,
+while a small Node.js script deterministically generates the favicon with its white contrast
+bubble. This avoids visual drift without another build dependency; generated output is checked by
+`npm run generate:favicon:check`.
+
 ## Rank before pagination and highlight from accepted state
 
 Ranking the complete server-side match set before pagination keeps page totals and membership
