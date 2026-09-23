@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
+import CheckIcon from '@mui/icons-material/Check';
 import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
 import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined';
 import SearchIcon from '@mui/icons-material/Search';
@@ -22,6 +23,7 @@ import {
   Pagination,
   Paper,
   Select,
+  Snackbar,
   TextField,
   ThemeProvider,
   Tooltip,
@@ -45,7 +47,13 @@ import { theme } from './theme.js';
 
 type SearchStatus =
   'initial' | 'waiting' | 'loading' | 'success' | 'empty' | 'error';
-type ClipboardFeedback = 'success' | 'unavailable' | 'failed';
+type ClipboardFeedbackStatus = 'success' | 'unavailable' | 'failed';
+
+interface ClipboardFeedback {
+  contactId: string;
+  id: number;
+  status: ClipboardFeedbackStatus;
+}
 
 const INITIAL_STATUS: SearchStatus = 'initial';
 type PageSize = 10 | 25 | 50;
@@ -67,19 +75,13 @@ export default function App() {
   const [clipboardFeedback, setClipboardFeedback] =
     useState<ClipboardFeedback | null>(null);
   const requestId = useRef(0);
+  const clipboardRequestId = useRef(0);
   const text = translations[locale];
 
   useEffect(() => {
     document.documentElement.lang = locale;
     document.title = text.documentTitle;
   }, [locale, text.documentTitle]);
-
-  useEffect(() => {
-    if (!clipboardFeedback) return undefined;
-
-    const timer = window.setTimeout(() => setClipboardFeedback(null), 3000);
-    return () => window.clearTimeout(timer);
-  }, [clipboardFeedback]);
 
   function handleInputChange(nextInput: string) {
     setInput(nextInput);
@@ -114,18 +116,43 @@ export default function App() {
     }
   }
 
-  async function handleCopyPhoneNumber(phone: string) {
+  async function handleCopyPhoneNumber(contactId: string, phone: string) {
+    const currentRequest = ++clipboardRequestId.current;
+    setClipboardFeedback(null);
+
     if (!navigator.clipboard?.writeText) {
-      setClipboardFeedback('unavailable');
+      setClipboardFeedback({
+        contactId,
+        id: currentRequest,
+        status: 'unavailable',
+      });
       return;
     }
 
     try {
       await navigator.clipboard.writeText(phone);
-      setClipboardFeedback('success');
+      if (clipboardRequestId.current === currentRequest) {
+        setClipboardFeedback({
+          contactId,
+          id: currentRequest,
+          status: 'success',
+        });
+      }
     } catch {
-      setClipboardFeedback('failed');
+      if (clipboardRequestId.current === currentRequest) {
+        setClipboardFeedback({
+          contactId,
+          id: currentRequest,
+          status: 'failed',
+        });
+      }
     }
+  }
+
+  function dismissClipboardFeedback(id: number) {
+    setClipboardFeedback((currentFeedback) =>
+      currentFeedback?.id === id ? null : currentFeedback,
+    );
   }
 
   useEffect(() => {
@@ -182,17 +209,15 @@ export default function App() {
     : '';
 
   const statusMessage =
-    status === 'initial'
-      ? text.initial
-      : status === 'waiting'
-        ? text.waiting
-        : status === 'loading'
-          ? text.loading
-          : status === 'success'
-            ? text.resultsCount(searchPage?.totalCount ?? 0)
-            : status === 'empty'
-              ? text.noResults
-              : '';
+    status === 'waiting'
+      ? text.waiting
+      : status === 'loading'
+        ? text.loading
+        : status === 'success'
+          ? text.resultsCount(searchPage?.totalCount ?? 0)
+          : status === 'empty'
+            ? text.noResults
+            : '';
 
   return (
     <ThemeProvider theme={theme}>
@@ -293,40 +318,29 @@ export default function App() {
               />
             </Paper>
 
-            <Box
-              aria-atomic="true"
-              aria-busy={status === 'loading'}
-              aria-live="polite"
-            >
-              {status === 'error' ? (
-                <Alert severity="error">
-                  {text.errors[errorCode ?? 'searchFailed']}
-                </Alert>
-              ) : null}
-              {clipboardFeedback ? (
-                <Alert
-                  severity={
-                    clipboardFeedback === 'success' ? 'success' : 'error'
-                  }
-                >
-                  {clipboardFeedback === 'success'
-                    ? text.phoneCopied
-                    : clipboardFeedback === 'unavailable'
-                      ? text.clipboardUnavailable
-                      : text.copyFailed}
-                </Alert>
-              ) : null}
-              {status !== 'error' ? (
-                <Box sx={{ alignItems: 'center', display: 'flex', gap: 1 }}>
-                  {status === 'loading' ? (
-                    <CircularProgress size={18} aria-label={text.loading} />
-                  ) : null}
-                  <Typography color="text.secondary">
-                    {statusMessage}
-                  </Typography>
-                </Box>
-              ) : null}
-            </Box>
+            {status !== 'initial' ? (
+              <Box
+                aria-atomic="true"
+                aria-busy={status === 'loading'}
+                aria-live="polite"
+              >
+                {status === 'error' ? (
+                  <Alert severity="error">
+                    {text.errors[errorCode ?? 'searchFailed']}
+                  </Alert>
+                ) : null}
+                {status !== 'error' ? (
+                  <Box sx={{ alignItems: 'center', display: 'flex', gap: 1 }}>
+                    {status === 'loading' ? (
+                      <CircularProgress size={18} aria-label={text.loading} />
+                    ) : null}
+                    <Typography color="text.secondary">
+                      {statusMessage}
+                    </Typography>
+                  </Box>
+                ) : null}
+              </Box>
+            ) : null}
 
             {searchPage &&
             (status === 'success' ||
@@ -423,17 +437,38 @@ export default function App() {
                             },
                           }}
                         />
-                        <Tooltip title={text.copyPhoneNumber(contact.name)}>
-                          <IconButton
-                            aria-label={text.copyPhoneNumber(contact.name)}
-                            color="primary"
-                            onClick={() =>
-                              void handleCopyPhoneNumber(contact.phone)
-                            }
-                          >
-                            <ContentCopyOutlinedIcon />
-                          </IconButton>
-                        </Tooltip>
+                        {clipboardFeedback?.status === 'success' &&
+                        clipboardFeedback.contactId === contact.id ? (
+                          <Tooltip title={text.copied}>
+                            <IconButton
+                              aria-label={text.copied}
+                              color="primary"
+                              onClick={() =>
+                                void handleCopyPhoneNumber(
+                                  contact.id,
+                                  contact.phone,
+                                )
+                              }
+                            >
+                              <CheckIcon />
+                            </IconButton>
+                          </Tooltip>
+                        ) : (
+                          <Tooltip title={text.copyPhoneNumber(contact.name)}>
+                            <IconButton
+                              aria-label={text.copyPhoneNumber(contact.name)}
+                              color="primary"
+                              onClick={() =>
+                                void handleCopyPhoneNumber(
+                                  contact.id,
+                                  contact.phone,
+                                )
+                              }
+                            >
+                              <ContentCopyOutlinedIcon />
+                            </IconButton>
+                          </Tooltip>
+                        )}
                       </ListItem>
                     ))}
                   </List>
@@ -496,6 +531,59 @@ export default function App() {
           </Box>
         </Container>
       </Box>
+      <Snackbar
+        anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
+        autoHideDuration={clipboardFeedback?.status === 'success' ? 2500 : 5000}
+        key={clipboardFeedback?.id}
+        onClose={(_event, reason) => {
+          if (reason !== 'clickaway' && clipboardFeedback) {
+            dismissClipboardFeedback(clipboardFeedback.id);
+          }
+        }}
+        open={Boolean(clipboardFeedback)}
+        sx={{
+          '& .MuiAlert-root': {
+            maxWidth: { sm: 480, xs: 'calc(100vw - 32px)' },
+          },
+          bottom: { sm: 24, xs: 16 },
+        }}
+      >
+        {clipboardFeedback ? (
+          <Alert
+            onClose={() => dismissClipboardFeedback(clipboardFeedback.id)}
+            role={clipboardFeedback.status === 'success' ? 'status' : 'alert'}
+            severity={
+              clipboardFeedback.status === 'success' ? 'success' : 'error'
+            }
+            sx={
+              clipboardFeedback.status === 'success'
+                ? {
+                    '& .MuiAlert-icon, & .MuiIconButton-root': {
+                      color: 'inherit',
+                    },
+                    bgcolor: 'success.main',
+                    color: 'common.white',
+                  }
+                : {
+                    '& .MuiAlert-icon, & .MuiIconButton-root': {
+                      color: 'primary.main',
+                    },
+                    bgcolor: 'background.paper',
+                    border: 1,
+                    borderColor: 'primary.main',
+                    color: 'text.primary',
+                  }
+            }
+            variant="filled"
+          >
+            {clipboardFeedback.status === 'success'
+              ? text.phoneCopied
+              : clipboardFeedback.status === 'unavailable'
+                ? text.clipboardUnavailable
+                : text.copyFailed}
+          </Alert>
+        ) : undefined}
+      </Snackbar>
     </ThemeProvider>
   );
 }

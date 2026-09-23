@@ -1,13 +1,5 @@
 # Backlog: FindCall improvements
 
-## Task 2 - Empty result area and copy feedback
-
-Planned only. Keep the result area empty for an empty query, while retaining search labels and
-handling actual loading, no-result, and error states. Replace inline copy success feedback with a
-non-modal bottom Snackbar, add brief stable-button success feedback, and handle repeated or late
-clipboard results without stale messages. Verify accessibility, keyboard behavior, mobile layout,
-and no layout shift.
-
 ## Task 3 - Targeted project structure improvement
 
 Planned only. Before moving files, inspect the real structure and propose a compact target tree

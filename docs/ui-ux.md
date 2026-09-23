@@ -33,10 +33,12 @@ result surface. Highlighting does not change the name's text or accessible name.
 
 ## States
 
-- Initial/empty: a helpful prompt with no stale list.
+- Initial/empty: no result-state message or stale list; the labelled search field remains visible.
 - Waiting/loading: neutral status; loading additionally shows a spinner.
 - Results: range, contact list, page size, and navigation.
-- Copying: a short live-region message reports success or a clear failure; numbers remain visible.
+- Copying: a bottom Snackbar reports success or a clear failure without shifting content. Success
+  uses the theme's green status color; errors use the white FindCall surface with a blue accent.
+  The copied button briefly shows a same-size check icon; numbers remain visible.
 - No results: an unambiguous non-technical message.
 - Error: a highlighted error instead of an empty result list.
 
@@ -56,3 +58,4 @@ returns to the initial state.
 | Server-side pagination after complete search | No match is lost at a page boundary; ID sorting distinguishes equal names. | Filtering only a pre-paged subset gives incomplete results. | Local checks, browser verification, and GitHub Actions confirmed by the user. |
 | Copy button per contact | A number can be transferred quickly and remains selectable after a failure. | Manual selection is slower; early success feedback is misleading. | Automated coverage and CI confirmed by the user; real Clipboard and keyboard testing remains open. |
 | Server-side start-match ranking with literal highlights | Likely name matches appear first while all substring matches remain visible and scannable. | Client-side rank changes after pagination would make totals and pages inconsistent. | Automated ranking and highlight coverage added; browser review remains open. |
+| Bottom Snackbar for copy feedback | Status does not move result content, and the temporary button check gives local confirmation. | Inline feedback shifts the list; a modal interrupts keyboard flow. | Automated state and stale-operation coverage added; mobile and keyboard review remains open. |

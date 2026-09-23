@@ -1,38 +1,33 @@
-# Current task: Task 1 - Search ranking and highlighting
+# Current task: Task 2 - Empty result area and copy feedback
 
 ## Goal
 
-Prioritize name-part starts in the existing server-side substring search and highlight literal
-matches in the displayed names without changing valid results, IDs, or pagination.
+Keep the result area empty until there is a real search and move copy feedback into a non-modal,
+accessible Snackbar without layout shifts or stale clipboard status.
 
 ## Scope
 
-Server-side ranking before pagination, safe client-side name highlighting, targeted tests, and
-affected documentation. Tasks 2 and 3 are planned only in the backlog.
+Empty-query state, Snackbar feedback, stable copy-button feedback, clipboard race handling,
+targeted tests, and affected documentation. Task 3 remains planned only in the backlog.
 
 ## Relevant context
 
-`server/phonebook.ts`, `server/phonebook.test.ts`, `src/highlight.ts`, `src/App.tsx`,
-`src/App.test.tsx`, and `docs/`.
+`src/App.tsx`, `src/App.test.tsx`, `src/i18n.ts`, and `docs/`.
 
 ## Acceptance checks
 
-- Name and later name-part starts (after spaces or hyphens) rank before remaining case-insensitive
-  substring matches; names and stable IDs order each priority group deterministically.
-- The server ranks the full result set before pagination without removing equal-name contacts.
-- The UI highlights every non-overlapping literal match from the response query while preserving
-  the full original accessible name and avoiding stale-response highlights.
+- Empty input renders no result-state message, while real searches continue to show loading,
+  no-result, and error states and ignore stale answers after clearing.
+- Copy feedback is a bottom Snackbar with one live status, success only after Clipboard completion,
+  and stable-size button feedback for the copied contact.
+- Late or repeated Clipboard operations cannot replace newer feedback; unavailable and rejected
+  access remains understandable and leaves the number selectable.
 
 ## Status and next step
 
-Implemented. The user's pre-fix log confirms typecheck, lint, and format checking passed after
-formatting; four tests then failed. One pagination expectation incorrectly used source order
-instead of the new deterministic alphabetical order, while three UI expectations assumed an
-unbroken name text node despite the explicitly required `mark` elements. The tests now assert the
-actual alphabetical sequence and full rendered name text without bypassing the new behavior.
-
-`git diff --check` passed, and the original phonebook data is unchanged. The targeted test command
-and `npm run check` could not run in this workspace because npm is unavailable (`npm: command not
-found`), so the correction remains unverified here. Browser verification of ranking and
-highlighting has not run. The user confirmed that all prior six steps are committed, pushed, and
-successful in GitHub Actions; the step 5 real-browser Clipboard and keyboard check remains open.
+Implemented. `git diff --check` passed and search, ranking, pagination, and phonebook data are
+unchanged. Targeted tests and `npm run check` could not run in this workspace because npm is
+unavailable (`npm: command not found`), so automated results remain unverified here. Browser
+verification of the Snackbar's mobile placement, layout stability, and keyboard behavior has not
+run. The user confirmed that Task 1's local check and CI pipeline passed. The step 5 real-browser
+Clipboard and keyboard check was not independently confirmed and remains open.

@@ -63,6 +63,16 @@ describe('App', () => {
     }
   });
 
+  it('keeps the result area empty before a search', () => {
+    render(<App />);
+
+    expect(
+      screen.queryByText(
+        'Gib einen Namen ein, um das Telefonbuch zu durchsuchen.',
+      ),
+    ).not.toBeInTheDocument();
+  });
+
   it('wartet vor der Suche und zeigt Treffer nach der Serverantwort', async () => {
     mockedSearchContacts.mockResolvedValueOnce(
       createSearchPage([
@@ -143,10 +153,10 @@ describe('App', () => {
     fireEvent.change(input, { target: { value: '   ' } });
     expect(screen.queryByText('Aktueller Kontakt')).not.toBeInTheDocument();
     expect(
-      screen.getByText(
+      screen.queryByText(
         'Gib einen Namen ein, um das Telefonbuch zu durchsuchen.',
       ),
-    ).toBeInTheDocument();
+    ).not.toBeInTheDocument();
   });
 
   it('keeps highlights tied to the newest accepted search response', async () => {
@@ -396,7 +406,10 @@ describe('App', () => {
     });
 
     expect(writeText).toHaveBeenCalledWith('0202-03');
-    expect(screen.getByText('Telefonnummer kopiert.')).toBeInTheDocument();
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Telefonnummer kopiert.',
+    );
+    expect(screen.getByRole('button', { name: 'Kopiert' })).toBeInTheDocument();
   });
 
   it('shows copy success only after clipboard writing succeeds', async () => {
@@ -435,7 +448,9 @@ describe('App', () => {
     await act(async () => {
       resolveWrite();
     });
-    expect(screen.getByText('Telefonnummer kopiert.')).toBeInTheDocument();
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Telefonnummer kopiert.',
+    );
   });
 
   it('reports rejected clipboard access without hiding the phone number', async () => {
@@ -464,11 +479,9 @@ describe('App', () => {
       );
     });
 
-    expect(
-      screen.getByText(
-        'Die Telefonnummer konnte nicht kopiert werden. Du kannst sie weiterhin auswählen.',
-      ),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'Die Telefonnummer konnte nicht kopiert werden. Du kannst sie weiterhin auswählen.',
+    );
     expect(screen.getByText('0101')).toBeInTheDocument();
   });
 
@@ -493,11 +506,72 @@ describe('App', () => {
       }),
     );
 
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'Kopieren ist in diesem Browser nicht verfügbar. Du kannst die Nummer weiterhin auswählen.',
+    );
+  });
+
+  it('keeps the newest clipboard result when an older write resolves late', async () => {
+    let resolveFirstWrite: () => void = () => {
+      throw new Error('First clipboard write was not initialized.');
+    };
+    let resolveSecondWrite: () => void = () => {
+      throw new Error('Second clipboard write was not initialized.');
+    };
+    const writeText = vi
+      .fn<(text: string) => Promise<void>>()
+      .mockImplementationOnce(
+        () =>
+          new Promise<void>((resolve) => {
+            resolveFirstWrite = resolve;
+          }),
+      )
+      .mockImplementationOnce(
+        () =>
+          new Promise<void>((resolve) => {
+            resolveSecondWrite = resolve;
+          }),
+      );
+    setClipboard(writeText);
+    mockedSearchContacts.mockResolvedValueOnce(
+      createSearchPage([
+        { id: 'contact-1', name: 'Anna Muster', phone: '0101' },
+        { id: 'contact-2', name: 'Berta Muster', phone: '0202' },
+      ]),
+    );
+    render(<App />);
+
+    fireEvent.change(screen.getByLabelText('Name suchen'), {
+      target: { value: 'muster' },
+    });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(280);
+    });
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: 'Telefonnummer von Anna Muster kopieren',
+      }),
+    );
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: 'Telefonnummer von Berta Muster kopieren',
+      }),
+    );
+
+    await act(async () => {
+      resolveSecondWrite();
+    });
+    expect(screen.getByRole('button', { name: 'Kopiert' })).toBeInTheDocument();
+    await act(async () => {
+      resolveFirstWrite();
+    });
     expect(
-      screen.getByText(
-        'Kopieren ist in diesem Browser nicht verfügbar. Du kannst die Nummer weiterhin auswählen.',
-      ),
+      screen.getByRole('button', {
+        name: 'Telefonnummer von Anna Muster kopieren',
+      }),
     ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Kopiert' })).toBeInTheDocument();
+    expect(writeText).toHaveBeenNthCalledWith(2, '0202');
   });
 
   it('translates error feedback after a language change', async () => {

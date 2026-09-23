@@ -49,6 +49,13 @@ copies the stored phone string directly, preserving leading zeroes and formattin
 message is deferred until `writeText` resolves; unavailable or rejected access keeps the number
 visible and gives the user a translated explanation.
 
+## Non-modal Snackbar feedback
+
+Copy feedback is rendered in a bottom Snackbar rather than the normal page flow, preventing the
+result list and its controls from moving. Success uses one polite status message and a temporary
+same-size check icon on the relevant button; errors use an alert. A monotonically increasing
+clipboard operation ID prevents late earlier operations from replacing newer feedback.
+
 ## Rank before pagination and highlight from accepted state
 
 Ranking the complete server-side match set before pagination keeps page totals and membership

@@ -35,7 +35,14 @@ the query, page size, page, and results.
 Every visible contact has an accessible copy action. It sends only the original phone-number
 string to the Clipboard API. A success message follows only after completion; unavailable or
 rejected Clipboard access produces a clear message. The visible phone number remains available
-for manual selection.
+for manual selection. Feedback appears in a non-modal bottom Snackbar, avoiding layout shifts;
+the successful button briefly shows a translated checkmark without changing its dimensions.
+
+## Empty result state
+
+Before a query or after clearing it, no result-state message or list is rendered. The search field
+and its label remain visible. Loading, no-result, and technical errors are only shown for an
+actual non-empty search, and clearing invalidates pending answers.
 
 ## Technical baseline and scope limits
 

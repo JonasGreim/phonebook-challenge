@@ -27,3 +27,5 @@
   other substring matches, while retaining stable name/ID ordering and pagination.
 - Added safe semantic highlighting for literal, non-overlapping name matches and coverage for
   ranking, special characters, multiple matches, and stale search responses.
+- Removed the empty-query result prompt and moved copy feedback to a non-modal bottom Snackbar
+  with temporary translated button confirmation and stale-operation protection.

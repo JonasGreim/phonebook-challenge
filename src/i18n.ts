@@ -8,6 +8,7 @@ export type TranslationKey =
 type Translations = {
   clearSearch: string;
   clipboardUnavailable: string;
+  copied: string;
   copyFailed: string;
   copyPhoneNumber: (name: string) => string;
   documentTitle: string;
@@ -16,7 +17,6 @@ type Translations = {
   heading: string;
   helperText: string;
   homeLabel: string;
-  initial: string;
   languageLabel: string;
   loading: string;
   noResults: string;
@@ -39,6 +39,7 @@ export const translations: Record<Locale, Translations> = {
     clearSearch: 'Suche leeren',
     clipboardUnavailable:
       'Kopieren ist in diesem Browser nicht verfügbar. Du kannst die Nummer weiterhin auswählen.',
+    copied: 'Kopiert',
     copyFailed:
       'Die Telefonnummer konnte nicht kopiert werden. Du kannst sie weiterhin auswählen.',
     copyPhoneNumber: (name) => `Telefonnummer von ${name} kopieren`,
@@ -49,7 +50,6 @@ export const translations: Record<Locale, Translations> = {
     helperText:
       'Die Suche startet automatisch und berücksichtigt keine Groß- und Kleinschreibung.',
     homeLabel: 'FindCall – zur Startseite',
-    initial: 'Gib einen Namen ein, um das Telefonbuch zu durchsuchen.',
     languageLabel: 'Sprache',
     loading: 'Telefonbuch wird durchsucht.',
     noResults: 'Keine passenden Kontakte gefunden.',
@@ -74,6 +74,7 @@ export const translations: Record<Locale, Translations> = {
     clearSearch: 'Clear search',
     clipboardUnavailable:
       'Copying is not available in this browser. You can still select the number.',
+    copied: 'Copied',
     copyFailed:
       'The phone number could not be copied. You can still select it.',
     copyPhoneNumber: (name) => `Copy phone number for ${name}`,
@@ -83,7 +84,6 @@ export const translations: Record<Locale, Translations> = {
     heading: 'Find a phone number',
     helperText: 'Search starts automatically and is not case-sensitive.',
     homeLabel: 'FindCall – back to home',
-    initial: 'Enter a name to search the phonebook.',
     languageLabel: 'Language',
     loading: 'Searching the phonebook.',
     noResults: 'No matching contacts found.',
