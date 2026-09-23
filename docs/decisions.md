@@ -49,4 +49,12 @@ copies the stored phone string directly, preserving leading zeroes and formattin
 message is deferred until `writeText` resolves; unavailable or rejected access keeps the number
 visible and gives the user a translated explanation.
 
+## Rank before pagination and highlight from accepted state
+
+Ranking the complete server-side match set before pagination keeps page totals and membership
+correct while making likely name matches easier to find. The fixed `de-DE` comparison makes order
+independent of the UI language, and stable IDs break equal-name ties. The client uses a small
+literal text splitter rather than a regular expression or HTML injection, then renders semantic
+`mark` elements from the query tied to the accepted response.
+
 UI/UX decisions are documented in [ui-ux.md](ui-ux.md).

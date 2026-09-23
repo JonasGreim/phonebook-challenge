@@ -34,6 +34,7 @@ import {
   type SearchPage,
 } from './api.js';
 import FindCallLogo from './FindCallLogo.js';
+import { getHighlightParts } from './highlight.js';
 import {
   getInitialLocale,
   LOCALE_STORAGE_KEY,
@@ -60,6 +61,7 @@ export default function App() {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState<PageSize>(10);
   const [searchPage, setSearchPage] = useState<SearchPage | null>(null);
+  const [resultQuery, setResultQuery] = useState('');
   const [status, setStatus] = useState<SearchStatus>(INITIAL_STATUS);
   const [errorCode, setErrorCode] = useState<SearchErrorCode | null>(null);
   const [clipboardFeedback, setClipboardFeedback] =
@@ -83,6 +85,7 @@ export default function App() {
     setInput(nextInput);
     setPage(1);
     setSearchPage(null);
+    setResultQuery('');
     setErrorCode(null);
     setStatus(nextInput.trim() ? 'waiting' : INITIAL_STATUS);
   }
@@ -145,6 +148,7 @@ export default function App() {
         );
         if (requestId.current === currentRequest) {
           setSearchPage(nextSearchPage);
+          setResultQuery(query);
           setStatus(nextSearchPage.totalCount ? 'success' : 'empty');
         }
       } catch (requestError: unknown) {
@@ -155,6 +159,7 @@ export default function App() {
           requestId.current === currentRequest
         ) {
           setSearchPage(null);
+          setResultQuery('');
           setErrorCode(getSearchErrorCode(requestError));
           setStatus('error');
         }
@@ -380,7 +385,34 @@ export default function App() {
                           <PhoneOutlinedIcon fontSize="small" />
                         </Box>
                         <ListItemText
-                          primary={contact.name}
+                          primary={getHighlightParts(
+                            contact.name,
+                            resultQuery,
+                          ).map((part, index) =>
+                            part.highlighted ? (
+                              <Box
+                                component="mark"
+                                key={`${contact.id}-${index}`}
+                                sx={{
+                                  bgcolor: 'primary.light',
+                                  borderRadius: 0,
+                                  color: 'inherit',
+                                  display: 'inline',
+                                  fontFamily: 'inherit',
+                                  fontSize: 'inherit',
+                                  fontWeight: 'inherit',
+                                  letterSpacing: 'inherit',
+                                  lineHeight: 'inherit',
+                                  m: 0,
+                                  p: 0,
+                                }}
+                              >
+                                {part.text}
+                              </Box>
+                            ) : (
+                              part.text
+                            ),
+                          )}
                           secondary={contact.phone}
                           slotProps={{
                             primary: {

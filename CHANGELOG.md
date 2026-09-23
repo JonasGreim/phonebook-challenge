@@ -23,3 +23,7 @@
   unavailable-Clipboard feedback.
 - Added tests for unmodified numbers, duplicate-name contact selection, and Clipboard outcomes.
 - Rewrote project-maintained documentation in English and documented the final review scope.
+- Prioritized complete server-side search results whose matches begin a name or name part before
+  other substring matches, while retaining stable name/ID ordering and pagination.
+- Added safe semantic highlighting for literal, non-overlapping name matches and coverage for
+  ranking, special characters, multiple matches, and stale search responses.

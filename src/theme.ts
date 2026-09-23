@@ -1,4 +1,4 @@
-import { createTheme } from '@mui/material';
+import { alpha, createTheme } from '@mui/material/styles';
 
 const colors = {
   navy: '#0B2D5B',
@@ -14,6 +14,7 @@ export const theme = createTheme({
   palette: {
     primary: {
       main: colors.blue,
+      light: alpha(colors.blue, 0.12),
       dark: '#1D4ED8',
       contrastText: colors.surface,
     },

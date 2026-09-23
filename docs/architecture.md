@@ -13,9 +13,10 @@ the 120 validated entries in memory.
 
 The server assigns a stable `contact-<index>` ID only at runtime for React and GraphQL. This is
 necessary because one name occurs twice; the source file remains unchanged. The server filters
-the complete in-memory set first, sorts matches by name and then stable ID, and only then slices
-the requested page. The GraphQL response contains `contacts`, `page`, `pageSize`, `totalCount`,
-and `totalPages`; invalid sizes or pages are rejected as input errors.
+the complete in-memory set first, ranks name and name-part starts ahead of other substring
+matches, sorts each rank by name and stable ID, and only then slices the requested page. The
+GraphQL response contains `contacts`, `page`, `pageSize`, `totalCount`, and `totalPages`; invalid
+sizes or pages are rejected as input errors.
 
 The client deliberately uses `fetch` rather than Apollo Client: one query does not warrant a
 client cache or another dependency. `AbortController` and a monotonically increasing request ID
@@ -29,6 +30,11 @@ client's GraphQL-response check continue to treat data as `unknown` until its sh
 `App` stores the language under `findcall-locale` in local storage and updates
 `document.documentElement.lang` and the page title. Locale state is separate from the query,
 page size, page, and results, so those values survive a language switch.
+
+`src/highlight.ts` splits a displayed name into literal, non-overlapping matching and non-matching
+text parts without regular expressions or HTML injection. `App` stores the query associated with
+the accepted server response and renders matching parts as semantic `mark` elements; a later input
+or a rejected stale response cannot alter the highlights for visible results.
 
 Copying stays entirely in the client. It passes `contact.phone` unchanged to
 `navigator.clipboard.writeText`; only a resolved promise triggers success feedback. Missing or

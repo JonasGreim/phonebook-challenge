@@ -26,7 +26,10 @@ change. A labelled icon button clears the query.
 Results use a compact list with a translated range such as “1–10 of 34 results”. Below it are a
 10/25/50 page-size selector and keyboard-accessible pagination. On narrow views, those controls
 stack with adequate spacing. Each contact also has a copy icon button with a tooltip and
-accessible label.
+accessible label. Literal query matches are subtly highlighted in the original name with semantic
+`mark` elements. Their background is the theme's light primary-blue variant, derived from the
+FindCall accent blue, with existing dark-blue primary text for readable contrast on the white
+result surface. Highlighting does not change the name's text or accessible name.
 
 ## States
 
@@ -52,3 +55,4 @@ returns to the initial state.
 | Central DE/EN switch | Language and accessible labels change consistently without losing context. | Per-component translations drift more easily. | Automated checks and browser verification confirmed by the user. |
 | Server-side pagination after complete search | No match is lost at a page boundary; ID sorting distinguishes equal names. | Filtering only a pre-paged subset gives incomplete results. | Local checks, browser verification, and GitHub Actions confirmed by the user. |
 | Copy button per contact | A number can be transferred quickly and remains selectable after a failure. | Manual selection is slower; early success feedback is misleading. | Automated coverage and CI confirmed by the user; real Clipboard and keyboard testing remains open. |
+| Server-side start-match ranking with literal highlights | Likely name matches appear first while all substring matches remain visible and scannable. | Client-side rank changes after pagination would make totals and pages inconsistent. | Automated ranking and highlight coverage added; browser review remains open. |

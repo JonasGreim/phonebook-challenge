@@ -42,6 +42,10 @@ function setClipboard(writeText: (text: string) => Promise<void>) {
   });
 }
 
+function getRenderedContactName(name: string) {
+  return screen.getByText((_content, element) => element?.textContent === name);
+}
+
 describe('App', () => {
   beforeEach(() => {
     vi.useFakeTimers();
@@ -82,7 +86,7 @@ describe('App', () => {
       10,
       expect.any(AbortSignal),
     );
-    expect(screen.getByText('Anna Muster')).toBeInTheDocument();
+    expect(getRenderedContactName('Anna Muster')).toBeInTheDocument();
     expect(screen.getByText('0123')).toBeInTheDocument();
   });
 
@@ -145,6 +149,61 @@ describe('App', () => {
     ).toBeInTheDocument();
   });
 
+  it('keeps highlights tied to the newest accepted search response', async () => {
+    let resolveFirst: (searchPage: SearchPage) => void = () => {
+      throw new Error('First request was not initialized.');
+    };
+    let resolveSecond: (searchPage: SearchPage) => void = () => {
+      throw new Error('Second request was not initialized.');
+    };
+    mockedSearchContacts
+      .mockImplementationOnce(
+        () =>
+          new Promise<SearchPage>((resolve) => {
+            resolveFirst = resolve;
+          }),
+      )
+      .mockImplementationOnce(
+        () =>
+          new Promise<SearchPage>((resolve) => {
+            resolveSecond = resolve;
+          }),
+      );
+    render(<App />);
+    const input = screen.getByLabelText('Name suchen');
+
+    fireEvent.change(input, { target: { value: 'first' } });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(280);
+    });
+    fireEvent.change(input, { target: { value: 'second' } });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(280);
+    });
+
+    await act(async () => {
+      resolveSecond(
+        createSearchPage([
+          { id: 'contact-2', name: 'Second Second', phone: '0202' },
+        ]),
+      );
+    });
+    const highlightedMatches = screen.getAllByText('Second');
+    expect(highlightedMatches).toHaveLength(2);
+    highlightedMatches.forEach((element) => {
+      expect(element.tagName).toBe('MARK');
+    });
+
+    await act(async () => {
+      resolveFirst(
+        createSearchPage([
+          { id: 'contact-1', name: 'First First', phone: '0101' },
+        ]),
+      );
+    });
+    expect(screen.queryByText('First First')).not.toBeInTheDocument();
+  });
+
   it('switches language without clearing the active query or results', async () => {
     mockedSearchContacts.mockResolvedValueOnce(
       createSearchPage([
@@ -158,7 +217,7 @@ describe('App', () => {
     await act(async () => {
       await vi.advanceTimersByTimeAsync(280);
     });
-    expect(screen.getByText('Anna Muster')).toBeInTheDocument();
+    expect(getRenderedContactName('Anna Muster')).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: 'Englisch' }));
 
@@ -167,7 +226,7 @@ describe('App', () => {
     expect(window.localStorage.getItem('findcall-locale')).toBe('en');
     expect(screen.getByLabelText('Search by name')).toHaveValue('anna');
     expect(screen.getByText('Search results')).toBeInTheDocument();
-    expect(screen.getByText('Anna Muster')).toBeInTheDocument();
+    expect(getRenderedContactName('Anna Muster')).toBeInTheDocument();
   });
 
   it('uses the persisted language for a new app instance', () => {
@@ -238,7 +297,7 @@ describe('App', () => {
       10,
       expect.any(AbortSignal),
     );
-    expect(screen.getByText('New Query Page')).toBeInTheDocument();
+    expect(getRenderedContactName('New Query Page')).toBeInTheDocument();
     expect(screen.getByText('1–1 von 26 Treffern')).toBeInTheDocument();
 
     await act(async () => {
@@ -303,7 +362,7 @@ describe('App', () => {
     });
     fireEvent.click(screen.getByRole('button', { name: 'Englisch' }));
 
-    expect(screen.getByText('Second Page')).toBeInTheDocument();
+    expect(getRenderedContactName('Second Page')).toBeInTheDocument();
     expect(screen.getByText('26–26 of 26 results')).toBeInTheDocument();
     expect(screen.getByRole('combobox')).toHaveTextContent('25');
     expect(mockedSearchContacts).toHaveBeenCalledTimes(3);

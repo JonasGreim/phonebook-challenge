@@ -1,35 +1,38 @@
-# Current task: Step 6 - README and completion
+# Current task: Task 1 - Search ranking and highlighting
 
 ## Goal
 
-Publish an accurate English README and convert all project-maintained documentation to English,
-then record final automated and manual verification status without claiming deployment.
+Prioritize name-part starts in the existing server-side substring search and highlight literal
+matches in the displayed names without changing valid results, IDs, or pagination.
 
 ## Scope
 
-The README, `AGENTS.md`, `docs/`, task handovers, changelog, documentation-link checks, and
-verification status. No product, dependency, deployment, or performance-architecture changes.
+Server-side ranking before pagination, safe client-side name highlighting, targeted tests, and
+affected documentation. Tasks 2 and 3 are planned only in the backlog.
 
 ## Relevant context
 
-`README.md`, `AGENTS.md`, `CHANGELOG.md`, `docs/`, `ai/tasks/`, `package.json`, and
-`.github/workflows/quality.yml`.
+`server/phonebook.ts`, `server/phonebook.test.ts`, `src/highlight.ts`, `src/App.tsx`,
+`src/App.test.tsx`, and `docs/`.
 
 ## Acceptance checks
 
-- The README describes implemented behavior, verified commands, development versus build versus
-  server operation, architecture, limitations, AI-assisted workflow, and a non-broken screenshot
-  placeholder.
-- Project-maintained Markdown documentation is English, links remain valid, and historical task
-  claims retain their original verification status.
-- The final status distinguishes user-confirmed results, checks executed in this workspace, and
-  remaining manual verification without implying deployment.
+- Name and later name-part starts (after spaces or hyphens) rank before remaining case-insensitive
+  substring matches; names and stable IDs order each priority group deterministically.
+- The server ranks the full result set before pagination without removing equal-name contacts.
+- The UI highlights every non-overlapping literal match from the response query while preserving
+  the full original accessible name and avoiding stale-response highlights.
 
 ## Status and next step
 
-Implemented documentation update. Markdown-language and local-link checks passed, as did
-`git diff --check`; no staged files were present and `.gitignore` plus `telefonbuch.json` were
-unchanged. The user confirmed the prior step 5 local check (21 tests) and GitHub Actions success,
-but those results do not verify this documentation-only change. A new `npm run check` and a clean
-environment start check cannot run here because neither Node.js nor npm is installed (`npm:
-command not found`). The step 5 real-browser Clipboard and keyboard check remains open.
+Implemented. The user's pre-fix log confirms typecheck, lint, and format checking passed after
+formatting; four tests then failed. One pagination expectation incorrectly used source order
+instead of the new deterministic alphabetical order, while three UI expectations assumed an
+unbroken name text node despite the explicitly required `mark` elements. The tests now assert the
+actual alphabetical sequence and full rendered name text without bypassing the new behavior.
+
+`git diff --check` passed, and the original phonebook data is unchanged. The targeted test command
+and `npm run check` could not run in this workspace because npm is unavailable (`npm: command not
+found`), so the correction remains unverified here. Browser verification of ranking and
+highlighting has not run. The user confirmed that all prior six steps are committed, pushed, and
+successful in GitHub Actions; the step 5 real-browser Clipboard and keyboard check remains open.

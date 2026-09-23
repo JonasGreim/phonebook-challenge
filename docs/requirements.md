@@ -14,8 +14,9 @@
 - Input is trimmed before searching; empty input means no search and no results.
 - Phone numbers are not searched and are always displayed as their original strings.
 - Accents and transliterations are not normalized.
-- The server searches every matching contact first, sorts deterministically by name and then
-  stable contact ID, and paginates afterward.
+- The server searches every matching contact first and ranks name starts and starts after spaces
+  or hyphens before remaining substring matches. Each group sorts deterministically by name and
+  then stable contact ID before pagination.
 - The default is 10 results per page; 10, 25, and 50 are available.
 - Each response returns contacts, page, page size, total count, and total pages. Invalid page or
   page-size parameters are rejected by the server.
@@ -54,3 +55,13 @@ selection, delayed success, rejected access, and a missing Clipboard API.
 The user confirmed successful automated checks, browser verification, and GitHub Actions for
 step 4. For step 5, the user confirmed a successful local `npm run check` with 21 tests and a
 successful GitHub Actions run. A real browser copy and keyboard test is still open.
+
+## Search ranking and highlighting
+
+Search remains a case-insensitive, trimmed substring match against the complete name. A match at
+the beginning of the name or immediately after a space or hyphen ranks ahead of a match within a
+name; no valid substring match is removed. Multi-word searches stay contiguous substrings.
+
+Displayed names highlight all non-overlapping literal matches with a semantic `mark` element.
+Highlighting preserves original casing and characters, treats symbols literally, and uses the
+query belonging to the accepted response so stale data cannot be misleadingly marked.

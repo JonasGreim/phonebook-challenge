@@ -79,6 +79,13 @@ export function searchPhonebook(contacts: Contact[], query: string): Contact[] {
   const normalizedQuery = normalizeQuery(query);
   if (normalizedQuery === '') return [];
 
+  return filterContacts(contacts, normalizedQuery);
+}
+
+function filterContacts(
+  contacts: Contact[],
+  normalizedQuery: string,
+): Contact[] {
   return contacts.filter((contact) =>
     contact.name.toLocaleLowerCase('de-DE').includes(normalizedQuery),
   );
@@ -94,8 +101,30 @@ function validatePagination(page: number, pageSize: number): void {
   }
 }
 
-function sortContacts(contacts: Contact[]): Contact[] {
+function startsNamePart(name: string, normalizedQuery: string): boolean {
+  const normalizedName = name.toLocaleLowerCase('de-DE');
+  let matchIndex = normalizedName.indexOf(normalizedQuery);
+
+  while (matchIndex !== -1) {
+    if (
+      matchIndex === 0 ||
+      normalizedName[matchIndex - 1] === ' ' ||
+      normalizedName[matchIndex - 1] === '-'
+    ) {
+      return true;
+    }
+    matchIndex = normalizedName.indexOf(normalizedQuery, matchIndex + 1);
+  }
+
+  return false;
+}
+
+function sortContacts(contacts: Contact[], normalizedQuery: string): Contact[] {
   return [...contacts].sort((first, second) => {
+    const firstPriority = startsNamePart(first.name, normalizedQuery) ? 0 : 1;
+    const secondPriority = startsNamePart(second.name, normalizedQuery) ? 0 : 1;
+    if (firstPriority !== secondPriority) return firstPriority - secondPriority;
+
     const nameOrder = first.name.localeCompare(second.name, 'de-DE');
     return nameOrder === 0
       ? first.id.localeCompare(second.id, 'en', { numeric: true })
@@ -110,7 +139,11 @@ export function searchPhonebookPage(
   pageSize: number,
 ): PhonebookPage {
   validatePagination(page, pageSize);
-  const sortedContacts = sortContacts(searchPhonebook(contacts, query));
+  const normalizedQuery = normalizeQuery(query);
+  const sortedContacts = sortContacts(
+    normalizedQuery ? filterContacts(contacts, normalizedQuery) : [],
+    normalizedQuery,
+  );
   const totalCount = sortedContacts.length;
   const totalPages = Math.ceil(totalCount / pageSize);
 

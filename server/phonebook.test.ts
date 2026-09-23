@@ -129,3 +129,73 @@ describe('Pagination', () => {
     ).toThrow('existiert nicht');
   });
 });
+
+describe('Search result ranking', () => {
+  const rankingContacts: Contact[] = [
+    { id: 'contact-8', name: 'Benjamin', phone: '0108' },
+    { id: 'contact-2', name: 'Jan', phone: '0102' },
+    { id: 'contact-5', name: 'Lena-Jansen', phone: '0105' },
+    { id: 'contact-1', name: 'Jansen', phone: '0101' },
+    { id: 'contact-4', name: 'Zaja', phone: '0104' },
+    { id: 'contact-12', name: 'Jan', phone: '0112' },
+  ];
+
+  it('prioritizes starts of names and later name parts before other substrings', () => {
+    const result = searchPhonebookPage(rankingContacts, 'JA', 1, 10);
+
+    expect(result.contacts.map((contact) => contact.id)).toEqual([
+      'contact-2',
+      'contact-12',
+      'contact-1',
+      'contact-5',
+      'contact-8',
+      'contact-4',
+    ]);
+    expect(result.totalCount).toBe(6);
+  });
+
+  it('keeps multi-word substring matching and prioritizes matching name-part starts', () => {
+    const contacts: Contact[] = [
+      { id: 'contact-1', name: 'Hanna Maria', phone: '0101' },
+      { id: 'contact-2', name: 'Anna Maria', phone: '0102' },
+      { id: 'contact-3', name: 'X Anna Maria', phone: '0103' },
+    ];
+
+    const result = searchPhonebookPage(contacts, 'anna ma', 1, 10);
+
+    expect(result.contacts.map((contact) => contact.id)).toEqual([
+      'contact-2',
+      'contact-3',
+      'contact-1',
+    ]);
+  });
+
+  it('preserves ranked order and complete IDs across page boundaries', () => {
+    const contacts: Contact[] = Array.from({ length: 12 }, (_, index) => ({
+      id: `contact-${index + 1}`,
+      name: index < 6 ? `Jan ${index}` : `Benjamin ${index}`,
+      phone: `01${String(index).padStart(2, '0')}`,
+    }));
+    const firstPage = searchPhonebookPage(contacts, 'ja', 1, 10);
+    const secondPage = searchPhonebookPage(contacts, 'ja', 2, 10);
+    const ids = [...firstPage.contacts, ...secondPage.contacts].map(
+      (contact) => contact.id,
+    );
+
+    expect(ids).toEqual([
+      'contact-1',
+      'contact-2',
+      'contact-3',
+      'contact-4',
+      'contact-5',
+      'contact-6',
+      'contact-11',
+      'contact-12',
+      'contact-7',
+      'contact-8',
+      'contact-9',
+      'contact-10',
+    ]);
+    expect(new Set(ids)).toHaveLength(12);
+  });
+});
