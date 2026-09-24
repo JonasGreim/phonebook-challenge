@@ -56,3 +56,7 @@
   and localized delayed-service startup feedback.
 - Recorded user-confirmed successful Render deployment and validation; public service URLs remain
   intentionally undocumented.
+- Refined the responsive header hierarchy with a larger FindCall mark and wordmark, clearer
+  subtitle, balanced spacing, and responsive header height.
+- Kept the FindCall wordmark visible on narrow screens while retaining a hidden mobile subtitle.
+- Scaled the FindCall mark, wordmark, subtitle, and header spacing further at large breakpoints.

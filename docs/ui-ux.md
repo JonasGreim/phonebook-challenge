@@ -24,9 +24,12 @@ A narrow centered content area places the heading, short explanation, and promin
 search field before the results. It uses available width on small screens and preserves a readable
 line length on larger ones.
 
-The compact header contains the wordmark and a visible DE/EN language switch, without invented
-navigation. The selection persists; query, page size, page, and results remain on language
-change. A labelled icon button clears the query.
+The compact header uses a 48/52/60 px responsive mark and keeps its 22/24 px FindCall wordmark
+visible at every width while remaining secondary to the page heading. Its subtitle scales slightly
+on large screens and remains hidden on narrow screens for clarity. The responsive 76/84/92 px
+header aligns the mark, wordmark, and visible DE/EN language switch without invented navigation.
+The selection persists; query, page size, page, and results remain on language change. A labelled
+icon button clears the query.
 
 A restrained semantic footer follows the content in normal document flow. On short pages, the
 main layout expands so it reaches the viewport bottom; on longer pages, it follows the results.

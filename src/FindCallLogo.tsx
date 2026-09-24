@@ -21,11 +21,18 @@ export default function FindCallLogo({
         alignItems: 'center',
         color: 'inherit',
         display: 'inline-flex',
-        gap: 1.25,
+        gap: { xs: 1.25, sm: 1.5, lg: 1.75 },
         textDecoration: 'none',
       }}
     >
-      <Box sx={{ display: 'flex', flexShrink: 0, height: 44, width: 44 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          flexShrink: 0,
+          height: { xs: 48, sm: 52, lg: 60 },
+          width: { xs: 48, sm: 52, lg: 60 },
+        }}
+      >
         <Box alt="" aria-hidden="true" component="img" src={findCallMark} />
       </Box>
 
@@ -33,14 +40,14 @@ export default function FindCallLogo({
         <Box
           aria-hidden="true"
           sx={{
-            display: { xs: 'none', sm: 'flex' },
+            display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
           }}
         >
           <Box
             sx={{
-              fontSize: '1.25rem',
+              fontSize: { xs: '1.375rem', lg: '1.5rem' },
               fontWeight: 750,
               letterSpacing: '-0.04em',
               lineHeight: 1,
@@ -57,10 +64,11 @@ export default function FindCallLogo({
           <Box
             sx={{
               color: '#667085',
-              fontSize: '0.68rem',
+              fontSize: { xs: '0.75rem', lg: '0.8125rem' },
               fontWeight: 400,
               lineHeight: 1.2,
-              mt: 0.5,
+              mt: 0.625,
+              display: { xs: 'none', sm: 'block' },
               whiteSpace: 'nowrap',
             }}
           >

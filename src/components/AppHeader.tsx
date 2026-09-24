@@ -24,8 +24,9 @@ export default function AppHeader({ locale, onLocaleChange }: AppHeaderProps) {
         sx={{
           alignItems: 'center',
           display: 'flex',
+          gap: { xs: 2, sm: 3, lg: 3.5 },
           justifyContent: 'space-between',
-          minHeight: 72,
+          minHeight: { xs: 76, sm: 84, lg: 92 },
         }}
       >
         <FindCallLogo homeLabel={text.homeLabel} subtitle={text.logoSubtitle} />
