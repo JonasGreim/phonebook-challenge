@@ -62,3 +62,21 @@
 - Scaled the FindCall mark, wordmark, subtitle, and header spacing further at large breakpoints.
 - Simplified translated search helper text and increased its responsive readability.
 - Reduced search helper-text prominence with concise translations and consistent secondary styling.
+- Added a responsive, decorative desktop hero using the selected FindCall image with a
+  high-contrast overlay and a stable search layout.
+- Refined the hero for the selected FindCall illustration with a minimal surface gradient and
+  responsive illustration/content sizing.
+- Added the wide desktop hero illustration with compact tablet artwork and tightened hero-to-results
+  spacing.
+- Made the wide illustration the seamless, full-width desktop hero background and adapted its
+  ultra-wide height to preserve the composition.
+- Limited hero artwork to large desktops and made the intermediate illustration-free hero compact
+  and content-driven.
+- Added an intermediate hero breakpoint that keeps a calm wave crop below 1300 px and places the
+  full illustration to the right from 1300 px, while hiding decoration on mobile.
+- Switched large desktops to the wider Hero illustration, aligned Hero and result content axes, and
+  retained subtle light-blue wave artwork for tablet and mobile layouts.
+- Enlarged the intermediate wave crop so right-side illustration details cannot appear partially
+  between the tablet and desktop breakpoints.
+- Added the alphabetically sorted first directory page on initial load and after clearing search,
+  reusing the existing GraphQL pagination and result-card controls.

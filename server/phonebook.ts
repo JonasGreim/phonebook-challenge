@@ -141,7 +141,7 @@ export function searchPhonebookPage(
   validatePagination(page, pageSize);
   const normalizedQuery = normalizeQuery(query);
   const sortedContacts = sortContacts(
-    normalizedQuery ? filterContacts(contacts, normalizedQuery) : [],
+    normalizedQuery ? filterContacts(contacts, normalizedQuery) : contacts,
     normalizedQuery,
   );
   const totalCount = sortedContacts.length;

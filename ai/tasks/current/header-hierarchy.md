@@ -1,27 +1,27 @@
-# Current task: Reduce search helper-text prominence
+# Current task: Load the initial alphabetized directory
 
 ## Goal
 
-Keep the translated case-sensitivity hint useful while making it secondary to the field and page
-content.
+Show the first alphabetically sorted directory page before a search and restore it when the field
+is cleared, without changing filtered search behavior.
 
 ## Scope and acceptance checks
 
-- Use the central translations and preserve search behavior.
-- Use 13–14 px secondary, normal-weight helper typography with sufficient line height and natural
-  wrapping at every viewport size.
-- Run configured checks and record automated and browser verification separately.
+- Request only the current page through the existing GraphQL pagination query.
+- Label the initial card “Alle Kontakte” / “All contacts” and keep count and pagination visible.
+- Use the same result card for filtered searches and preserve the existing no-match empty state.
+- Keep the current Hero, responsive layout, localization, stable IDs, and clipboard behavior.
+- Keep the results section in normal flow on the neutral background with existing spacing.
+- Preserve search, GraphQL, pagination, translations, stable IDs, keyboard behavior, and Clipboard
+  feedback. Run configured checks and record browser verification separately.
 
 ## Status and next step
 
-Implemented: helper text is now “Groß- und Kleinschreibung wird nicht berücksichtigt.” /
-“Search is not case-sensitive.”. It uses 13 px normal-weight secondary text with 1.5 line height and
-standard wrapping, without changing field behavior.
+Implemented: blank queries now request the paginated alphabetized directory page on mount and
+after clearing. Filtered queries retain the debounce, ranking, highlighting, pagination, errors,
+and empty state. Tests cover the initial request, labels, filtering, restoration, sorting, and
+stable identifiers.
 
-Verification passed: `npm run check` completed typecheck, lint, format check, 32 tests, and the
-production build. Translation assertions cover German initial and English switched states. `git
-diff --check` passed. The known build chunk-size warning is not a failure.
-
-Pending browser verification: inspect 320, 375, 768, 1024, and 1440 px in both languages with
-empty, focused, typed, result, empty-result, and error states. Check readability, alignment,
-wrapping, layout shifts, and horizontal overflow.
+Verification: `npm run check` and `git diff --check` are pending. Browser verification should
+check initial, filtered, cleared, empty, loading, error, pagination, long-result, and clipboard
+states in both locales.

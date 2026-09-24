@@ -11,7 +11,8 @@
 ## Agreed behavior
 
 - A one-character-or-longer substring in `name` is searchable.
-- Input is trimmed before searching; empty input means no search and no results.
+- Input is trimmed before searching; an empty input requests the first paginated directory page,
+  sorted alphabetically by display name.
 - Phone numbers are not searched and are always displayed as their original strings.
 - Accents and transliterations are not normalized.
 - The server searches every matching contact first and ranks name starts and starts after spaces
@@ -20,8 +21,9 @@
 - The default is 10 results per page; 10, 25, and 50 are available.
 - Each response returns contacts, page, page size, total count, and total pages. Invalid page or
   page-size parameters are rejected by the server.
-- A request starts after 280 ms without input. Abortion and a request ID prevent older responses
-  from replacing newer state.
+- Filtered requests start after 280 ms without input; the initial directory request starts on
+  mount and clearing the field requests page one immediately. Abortion and a request ID prevent
+  older responses from replacing newer state.
 - After three pending seconds, a neutral translated message explains that a free hosted service may
   still be starting; it clears when the request finishes or is superseded.
 
@@ -40,10 +42,15 @@ rejected Clipboard access produces a clear message. The visible phone number rem
 for manual selection. Feedback appears in a non-modal bottom Snackbar, avoiding layout shifts;
 the successful button briefly shows a translated checkmark without changing its dimensions.
 
-## Empty result state
+## Initial directory and empty result state
 
-Before a query or after clearing it, no result-state message or list is rendered. The search field
-and its label remain visible. After the latest accepted non-empty search returns zero matches, the
+On initial load, and after clearing the field, the client requests only the current page of the
+complete directory through the existing GraphQL pagination query. The initial card is labelled
+“Alle Kontakte” / “All contacts”, keeps its result count and pagination controls, and does not
+download the complete phonebook into the browser. Entering a term switches the same card to the
+filtered search view.
+
+After the latest accepted non-empty search returns zero matches, the
 results card shows its translated heading, a `0` count, and one neutral contact-row-shaped empty
 state with a search icon, name-weight message, and translated hint; it does not show pagination or
 a page-size selector. Loading and technical errors remain separate states, and clearing invalidates

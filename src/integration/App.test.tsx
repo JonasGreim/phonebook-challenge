@@ -63,14 +63,38 @@ describe('App', () => {
     }
   });
 
-  it('keeps the result area empty before a search', () => {
+  it('loads the alphabetically sorted initial contact page', async () => {
+    mockedSearchContacts.mockResolvedValueOnce(
+      createSearchPage(
+        [
+          { id: 'contact-1', name: 'Anna Muster', phone: '0123' },
+          { id: 'contact-2', name: 'Zoe Beispiel', phone: '0456' },
+        ],
+        1,
+        10,
+        120,
+        12,
+      ),
+    );
     render(<App />);
 
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(0);
+    });
+
+    expect(mockedSearchContacts).toHaveBeenCalledWith(
+      '',
+      1,
+      10,
+      expect.any(AbortSignal),
+    );
     expect(
-      screen.queryByText(
-        'Gib einen Namen ein, um das Telefonbuch zu durchsuchen.',
-      ),
-    ).not.toBeInTheDocument();
+      screen.getByRole('region', { name: 'Alle Kontakte' }),
+    ).toBeInTheDocument();
+    expect(getRenderedContactName('Anna Muster')).toBeInTheDocument();
+    expect(getRenderedContactName('Zoe Beispiel')).toBeInTheDocument();
+    expect(screen.getByText('1–2 von 120 Treffern')).toBeInTheDocument();
+    expect(screen.getByRole('navigation')).toBeInTheDocument();
     const authorText = screen.getByText(
       `© ${new Date().getFullYear()} Jonas Greim`,
     );
@@ -88,9 +112,52 @@ describe('App', () => {
         name: 'LinkedIn-Profil von Jonas Greim',
       }),
     ).toHaveAttribute('href', 'http://www.linkedin.com/in/jonas-greim-dev');
-    expect(
-      screen.queryByRole('link', { name: 'FindCall auf GitHub' }),
-    ).not.toBeInTheDocument();
+  });
+
+  it('filters the initial list and restores it when the search is cleared', async () => {
+    mockedSearchContacts
+      .mockResolvedValueOnce(
+        createSearchPage(
+          [{ id: 'contact-1', name: 'Anna Muster', phone: '0123' }],
+          1,
+          10,
+          120,
+          12,
+        ),
+      )
+      .mockResolvedValueOnce(
+        createSearchPage([
+          { id: 'contact-2', name: 'Zoe Beispiel', phone: '0456' },
+        ]),
+      )
+      .mockResolvedValueOnce(
+        createSearchPage(
+          [{ id: 'contact-1', name: 'Anna Muster', phone: '0123' }],
+          1,
+          10,
+          120,
+          12,
+        ),
+      );
+    render(<App />);
+    const input = screen.getByLabelText('Name suchen');
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(0);
+    });
+    fireEvent.change(input, { target: { value: 'zoe' } });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(280);
+    });
+    expect(screen.getByText('Suchergebnisse')).toBeInTheDocument();
+    expect(getRenderedContactName('Zoe Beispiel')).toBeInTheDocument();
+
+    fireEvent.change(input, { target: { value: '' } });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(0);
+    });
+    expect(screen.getByText('Alle Kontakte')).toBeInTheDocument();
+    expect(getRenderedContactName('Anna Muster')).toBeInTheDocument();
   });
 
   it('wartet vor der Suche und zeigt Treffer nach der Serverantwort', async () => {

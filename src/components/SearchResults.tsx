@@ -82,6 +82,7 @@ export default function SearchResults({
       : status === 'empty'
         ? text.emptyResultsCount
         : text.waiting;
+  const heading = resultQuery ? text.results : text.allContacts;
 
   return (
     <>
@@ -115,7 +116,7 @@ export default function SearchResults({
         <Paper
           component="section"
           aria-atomic={status === 'empty' ? 'true' : undefined}
-          aria-label={text.results}
+          aria-label={heading}
           aria-live={status === 'empty' ? 'polite' : undefined}
           elevation={0}
         >
@@ -131,7 +132,7 @@ export default function SearchResults({
             }}
           >
             <Typography component="h2" variant="h2">
-              {text.results}
+              {heading}
             </Typography>
             <Typography color="text.secondary" variant="body2">
               {headerMetadata}

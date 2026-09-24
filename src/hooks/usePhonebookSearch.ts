@@ -59,10 +59,8 @@ export function usePhonebookSearch() {
     const query = input.trim();
     const currentRequest = ++requestId.current;
 
-    if (!query) return undefined;
-
     const controller = new AbortController();
-    const timer = window.setTimeout(async () => {
+    const request = async () => {
       setStatus('loading');
       const serviceStartingTimer = window.setTimeout(() => {
         if (requestId.current === currentRequest) {
@@ -98,7 +96,8 @@ export function usePhonebookSearch() {
       } finally {
         window.clearTimeout(serviceStartingTimer);
       }
-    }, 280);
+    };
+    const timer = window.setTimeout(request, query ? 280 : 0);
 
     return () => {
       window.clearTimeout(timer);

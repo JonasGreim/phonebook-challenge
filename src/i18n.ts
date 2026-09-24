@@ -7,6 +7,7 @@ export type TranslationKey =
 
 type Translations = {
   clearSearch: string;
+  allContacts: string;
   clipboardUnavailable: string;
   copied: string;
   copyFailed: string;
@@ -42,6 +43,7 @@ type Translations = {
 
 export const translations: Record<Locale, Translations> = {
   de: {
+    allContacts: 'Alle Kontakte',
     clearSearch: 'Suche leeren',
     clipboardUnavailable:
       'Kopieren ist in diesem Browser nicht verfügbar. Du kannst die Nummer weiterhin auswählen.',
@@ -84,6 +86,7 @@ export const translations: Record<Locale, Translations> = {
     },
   },
   en: {
+    allContacts: 'All contacts',
     clearSearch: 'Clear search',
     clipboardUnavailable:
       'Copying is not available in this browser. You can still select the number.',

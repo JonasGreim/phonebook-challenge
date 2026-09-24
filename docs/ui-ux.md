@@ -20,11 +20,20 @@ without changing the signal arcs; the generated favicon must not be edited manua
 
 ## Layout
 
-A narrow centered content area places the heading, short explanation, and prominently labelled
-search field before the results. It uses available width on small screens and preserves a readable
-line length on larger ones. Its concise case-sensitivity helper text uses 13 px secondary text,
-normal weight, and a 1.5 line height for natural wrapping without competing with the label or
-page slogan.
+A responsive hero immediately below the header contains the heading, short explanation, and
+prominently labelled search field. From 1300 px, the outer full-width hero uses
+`public/hero-image-wider.png` as an enlarged, left-anchored background with the woman, profile
+card, magnifier, connection lines, and waves grouped on the right. Between 768 px and 1299 px, it uses
+`public/hero-image-big.png` enlarged and left-anchored so only the calm light-blue wave crop is
+visible; the right-side illustration details remain completely beyond the viewport. Below 768 px,
+the same asset provides a subtle wave texture over a light-blue fallback, while the Hero remains
+compact and content-driven. The Hero and results use the same centered
+`sm` container axis; the background image never controls content position. The artwork never creates
+a separate panel or seam. The wide Hero aligns content toward the bottom with a 40 px card-to-Hero
+gap; result content begins 40 px below the Hero on the neutral page background. Results always stay
+in normal flow, so a search does not resize the Hero. The concise case-sensitivity helper text uses
+13 px secondary text, normal weight, and a 1.5 line height for natural wrapping without competing
+with the label or page slogan.
 
 The compact header uses a 48/52/60 px responsive mark and keeps its 22/24 px FindCall wordmark
 visible at every width while remaining secondary to the page heading. Its subtitle scales slightly
@@ -42,17 +51,20 @@ group remains centered on one line at narrow widths. Links use translated labels
 restrained theme contrast, primary-blue hover, and the theme focus treatment for keyboard
 navigation. Clipboard feedback reserves space above it.
 
-Results use a compact list with a translated range such as “1–10 of 34 results”. Below it are a
-10/25/50 page-size selector and keyboard-accessible pagination. On narrow views, those controls
-stack with adequate spacing. Each contact also has a copy icon button with a tooltip and
-accessible label. Literal query matches are subtly highlighted in the original name with semantic
+Results use a compact list with a translated range such as “1–10 of 34 results”. On initial load
+and after clearing the field, the same card is labelled “Alle Kontakte” / “All contacts” and shows
+the first alphabetically sorted directory page. It requests only the current page through the
+existing GraphQL pagination query. Below it are a 10/25/50 page-size selector and
+keyboard-accessible pagination. On narrow views, those controls stack with adequate spacing. Each
+contact also has a copy icon button with a tooltip and accessible label. Literal query matches are subtly highlighted in the original name with semantic
 `mark` elements. Their background is the theme's light primary-blue variant, derived from the
 FindCall accent blue, with existing dark-blue primary text for readable contrast on the white
 result surface. Highlighting does not change the name's text or accessible name.
 
 ## States
 
-- Initial/empty: no result-state message or stale list; the labelled search field remains visible.
+- Initial directory: the first alphabetically sorted page is visible immediately, with count,
+  page-size, and pagination controls. The labelled search field remains visible.
 - Waiting/loading: neutral status; loading additionally shows a spinner.
 - Delayed hosted-service start: after three seconds, loading explains in the active language that
   the first request can take up to a minute. It is neutral, does not move focus, and clears with
@@ -71,15 +83,15 @@ returns to the initial state.
 
 ## Decisions
 
-| Decision | Benefit | Alternative and drawback | Verification |
-| --- | --- | --- | --- |
-| 280 ms debounce | Responsive input without a request for every keystroke. | Immediate requests create unnecessary server load. | Covered by automated behavior tests. |
-| Visible field label and helper text | The search purpose and rules remain clear while typing. | A placeholder alone disappears during input. | Browser keyboard and accessibility behavior confirmed by the user for step 4. |
-| `aria-live` status and Material UI focus treatment | Feedback is available without watching the list. | Purely visual feedback is less accessible. | Screen-reader-specific verification remains open. |
-| Symbolic FindCall wordmark and favicon | The brand is recognizable without a marketing panel. | External imagery would be harder to maintain and license. | Production build includes favicon; 16/32 px display remains a visual review item. |
-| Compact list rather than cards | Many results remain scannable and need less mobile scrolling. | Large cards consume unnecessary space. | Browser layout was confirmed by the user for step 4. |
-| Central DE/EN switch | Language and accessible labels change consistently without losing context. | Per-component translations drift more easily. | Automated checks and browser verification confirmed by the user. |
-| Server-side pagination after complete search | No match is lost at a page boundary; ID sorting distinguishes equal names. | Filtering only a pre-paged subset gives incomplete results. | Local checks, browser verification, and GitHub Actions confirmed by the user. |
-| Copy button per contact | A number can be transferred quickly and remains selectable after a failure. | Manual selection is slower; early success feedback is misleading. | Automated coverage and CI confirmed by the user; real Clipboard and keyboard testing remains open. |
-| Server-side start-match ranking with literal highlights | Likely name matches appear first while all substring matches remain visible and scannable. | Client-side rank changes after pagination would make totals and pages inconsistent. | Automated ranking and highlight coverage added; browser review remains open. |
-| Bottom Snackbar for copy feedback | Status does not move result content, and the temporary button check gives local confirmation. | Inline feedback shifts the list; a modal interrupts keyboard flow. | Automated state and stale-operation coverage added; mobile and keyboard review remains open. |
+| Decision                                                | Benefit                                                                                       | Alternative and drawback                                                            | Verification                                                                                       |
+| ------------------------------------------------------- | --------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| 280 ms debounce                                         | Responsive input without a request for every keystroke.                                       | Immediate requests create unnecessary server load.                                  | Covered by automated behavior tests.                                                               |
+| Visible field label and helper text                     | The search purpose and rules remain clear while typing.                                       | A placeholder alone disappears during input.                                        | Browser keyboard and accessibility behavior confirmed by the user for step 4.                      |
+| `aria-live` status and Material UI focus treatment      | Feedback is available without watching the list.                                              | Purely visual feedback is less accessible.                                          | Screen-reader-specific verification remains open.                                                  |
+| Symbolic FindCall wordmark and favicon                  | The brand is recognizable without a marketing panel.                                          | External imagery would be harder to maintain and license.                           | Production build includes favicon; 16/32 px display remains a visual review item.                  |
+| Compact list rather than cards                          | Many results remain scannable and need less mobile scrolling.                                 | Large cards consume unnecessary space.                                              | Browser layout was confirmed by the user for step 4.                                               |
+| Central DE/EN switch                                    | Language and accessible labels change consistently without losing context.                    | Per-component translations drift more easily.                                       | Automated checks and browser verification confirmed by the user.                                   |
+| Server-side pagination after complete search            | No match is lost at a page boundary; ID sorting distinguishes equal names.                    | Filtering only a pre-paged subset gives incomplete results.                         | Local checks, browser verification, and GitHub Actions confirmed by the user.                      |
+| Copy button per contact                                 | A number can be transferred quickly and remains selectable after a failure.                   | Manual selection is slower; early success feedback is misleading.                   | Automated coverage and CI confirmed by the user; real Clipboard and keyboard testing remains open. |
+| Server-side start-match ranking with literal highlights | Likely name matches appear first while all substring matches remain visible and scannable.    | Client-side rank changes after pagination would make totals and pages inconsistent. | Automated ranking and highlight coverage added; browser review remains open.                       |
+| Bottom Snackbar for copy feedback                       | Status does not move result content, and the temporary button check gives local confirmation. | Inline feedback shifts the list; a modal interrupts keyboard flow.                  | Automated state and stale-operation coverage added; mobile and keyboard review remains open.       |

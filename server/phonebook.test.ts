@@ -112,6 +112,24 @@ describe('Pagination', () => {
     expect(result.totalPages).toBe(2);
   });
 
+  it('returns the complete directory alphabetically for an empty query', () => {
+    const result = searchPhonebookPage(
+      [
+        { id: 'contact-2', name: 'Zoe Beispiel', phone: '0456' },
+        { id: 'contact-1', name: 'Anna Muster', phone: '0123' },
+      ],
+      '',
+      1,
+      10,
+    );
+
+    expect(result.contacts.map((contact) => contact.name)).toEqual([
+      'Anna Muster',
+      'Zoe Beispiel',
+    ]);
+    expect(result.totalCount).toBe(2);
+  });
+
   it('handles no results and rejects invalid pages or page sizes', () => {
     expect(searchPhonebookPage(paginatedContacts, 'missing', 1, 10)).toEqual({
       contacts: [],
