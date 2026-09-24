@@ -54,3 +54,5 @@
 - Kept the compact author and profile links aligned in one centered row on narrow screens.
 - Prepared free Render static/web services with CI-gated deployment, production endpoint handling,
   and localized delayed-service startup feedback.
+- Recorded user-confirmed successful Render deployment and validation; public service URLs remain
+  intentionally undocumented.

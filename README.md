@@ -120,7 +120,8 @@ both services. No deploy hook or repository credential is required.
 
 The free backend sleeps after 15 minutes without inbound traffic and can take about a minute to
 start for the next request. After three seconds, FindCall explains this neutrally in the selected
-language. It sends no keep-alive requests. No Render service or deployment URL is confirmed yet.
+language. It sends no keep-alive requests. The user confirmed deployment and validation; deployment
+URLs were not recorded in the repository.
 
 ## Documentation and AI-assisted workflow
 
@@ -135,9 +136,9 @@ results reviewable.
 
 ## Known limitations
 
-- There is no live deployment, authentication, database, or search index. Render configuration is
-  prepared, but creating public services requires account access and explicit authorization to
-  expose the supplied phonebook through the search API.
+- There is no authentication, database, or search index. The free Render deployment is suitable
+  for a challenge/demo; its backend can sleep after inactivity and deployment URLs are intentionally
+  not stored in the repository.
 - The phonebook is a small, immutable in-memory data set; larger or mutable data needs a different
   persistence and search strategy.
 - Clipboard support depends on the browser and context. Automated mocks cover its behavior, but a
