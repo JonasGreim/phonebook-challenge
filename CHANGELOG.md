@@ -80,3 +80,4 @@
   between the tablet and desktop breakpoints.
 - Added the alphabetically sorted first directory page on initial load and after clearing search,
   reusing the existing GraphQL pagination and result-card controls.
+- Added static Open Graph and Twitter link-preview metadata with the public FindCall illustration.

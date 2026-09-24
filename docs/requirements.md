@@ -7,6 +7,8 @@
 - The interface remains usable on small and large screens.
 - `server/data/telefonbuch.json` is the byte-identical, server-side source of data.
 - The client queries data at runtime through GraphQL.
+- The production document includes crawler-visible Open Graph and Twitter preview metadata using
+  the public `link-preview.png` asset and absolute HTTPS URLs; it contains no contact data.
 
 ## Agreed behavior
 

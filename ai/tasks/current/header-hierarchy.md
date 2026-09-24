@@ -1,27 +1,25 @@
-# Current task: Load the initial alphabetized directory
+# Current task: Add social link preview metadata
 
 ## Goal
 
-Show the first alphabetically sorted directory page before a search and restore it when the field
-is cleared, without changing filtered search behavior.
+Expose complete crawler-visible Open Graph and Twitter metadata for the public FindCall link
+preview without changing the responsive Hero or bilingual UI.
 
 ## Scope and acceptance checks
 
-- Request only the current page through the existing GraphQL pagination query.
-- Label the initial card “Alle Kontakte” / “All contacts” and keep count and pagination visible.
-- Use the same result card for filtered searches and preserve the existing no-match empty state.
-- Keep the current Hero, responsive layout, localization, stable IDs, and clipboard behavior.
-- Keep the results section in normal flow on the neutral background with existing spacing.
-- Preserve search, GraphQL, pagination, translations, stable IDs, keyboard behavior, and Clipboard
-  feedback. Run configured checks and record browser verification separately.
+- Add all requested Open Graph and Twitter tags to the static `index.html` response.
+- Extend the normal description to approximately 120–160 characters.
+- Keep absolute HTTPS production URLs and use only `public/link-preview.png` for social previews.
+- Preserve the existing Hero assets, UI localization, GraphQL, and server-only data boundary.
 
 ## Status and next step
 
-Implemented: blank queries now request the paginated alphabetized directory page on mount and
-after clearing. Filtered queries retain the debounce, ranking, highlighting, pagination, errors,
-and empty state. Tests cover the initial request, labels, filtering, restoration, sorting, and
-stable identifiers.
+Implemented: `index.html` now contains static Open Graph and Twitter metadata pointing to the
+Render-hosted `link-preview.png` asset. The preview asset remains separate from responsive Hero
+artwork.
 
-Verification: `npm run check` and `git diff --check` are pending. Browser verification should
-check initial, filtered, cleared, empty, loading, error, pagination, long-result, and clipboard
-states in both locales.
+Verification: `npm run check` and `git diff --check` passed. The built `dist/index.html` contains
+all requested tags and `dist/link-preview.png` is present. Deployment and external Open Graph
+validator checks are not complete: the currently deployed page responds `200`, but its
+`/link-preview.png` URL responds `404`, so this change still needs a Static Site deployment and
+validator-cache refresh.

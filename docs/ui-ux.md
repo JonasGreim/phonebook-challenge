@@ -20,6 +20,11 @@ without changing the signal arcs; the generated favicon must not be edited manua
 
 ## Layout
 
+The production document head provides a bilingual-safe FindCall title, concise directory
+description, and Open Graph/Twitter metadata for the public `link-preview.png` illustration. The
+preview uses absolute HTTPS URLs and does not contain contact names or phone numbers; responsive
+Hero assets remain separate from social sharing artwork.
+
 A responsive hero immediately below the header contains the heading, short explanation, and
 prominently labelled search field. From 1300 px, the outer full-width hero uses
 `public/hero-image-wider.png` as an enlarged, left-anchored background with the woman, profile
