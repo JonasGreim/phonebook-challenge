@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Refined the README brand header with a compact centered favicon beside the FindCall heading,
+  quality-check badge, and short English description.
+- Centered the README live-demo link below the compact brand header description.
 - Created the React and Material UI client with a GraphQL integration.
 - Created the Apollo Server with a validated in-memory phonebook and substring search.
 - Added requirements, architecture, UI/UX, and technical decision documentation.

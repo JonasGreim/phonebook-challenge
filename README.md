@@ -1,15 +1,18 @@
-# FindCall
-
-[![Quality checks](https://github.com/JonasGreim/phonebook-challenge/actions/workflows/quality.yml/badge.svg)](https://github.com/JonasGreim/phonebook-challenge/actions/workflows/quality.yml)
+<h1 align="center">
+  <img src="public/favicon.svg" alt="FindCall logo" width="72" valign="middle" />&nbsp; FindCall
+</h1>
 
 <p align="center">
-  <img src="src/assets/findcall-mark.svg" alt="FindCall logo" width="96" />
+  <a href="https://github.com/JonasGreim/phonebook-challenge/actions/workflows/quality.yml">
+    <img src="https://github.com/JonasGreim/phonebook-challenge/actions/workflows/quality.yml/badge.svg" alt="Quality checks" />
+  </a>
 </p>
 
-FindCall is a bilingual German/English phonebook search website. Search by contact name,
-review paginated results, and copy a phone number with accessible feedback.
+<p align="center">Accessible bilingual phonebook search for finding contact phone numbers.</p>
 
-**[Open the live demo](https://findcall.onrender.com/)**
+<p align="center">
+  <strong><a href="https://findcall.onrender.com/">Open the live demo</a></strong>
+</p>
 
 ## Live demo
 
