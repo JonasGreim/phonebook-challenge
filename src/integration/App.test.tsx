@@ -76,6 +76,9 @@ describe('App', () => {
     );
     expect(authorText).toBeInTheDocument();
     expect(
+      screen.getByText('Groß- und Kleinschreibung wird nicht berücksichtigt.'),
+    ).toBeInTheDocument();
+    expect(
       screen.getByRole('link', {
         name: 'GitHub-Profil von Jonas Greim',
       }),
@@ -351,6 +354,9 @@ describe('App', () => {
 
     expect(document.documentElement.lang).toBe('en');
     expect(document.title).toBe('FindCall – Find a phone number');
+    expect(
+      screen.getByText('Search is not case-sensitive.'),
+    ).toBeInTheDocument();
     expect(window.localStorage.getItem('findcall-locale')).toBe('en');
     expect(
       screen.getByRole('link', {

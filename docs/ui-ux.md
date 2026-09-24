@@ -22,7 +22,9 @@ without changing the signal arcs; the generated favicon must not be edited manua
 
 A narrow centered content area places the heading, short explanation, and prominently labelled
 search field before the results. It uses available width on small screens and preserves a readable
-line length on larger ones.
+line length on larger ones. Its concise case-sensitivity helper text uses 13 px secondary text,
+normal weight, and a 1.5 line height for natural wrapping without competing with the label or
+page slogan.
 
 The compact header uses a 48/52/60 px responsive mark and keeps its 22/24 px FindCall wordmark
 visible at every width while remaining secondary to the page heading. Its subtitle scales slightly

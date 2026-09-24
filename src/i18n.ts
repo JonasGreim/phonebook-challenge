@@ -55,8 +55,7 @@ export const translations: Record<Locale, Translations> = {
     german: 'Deutsch',
     heading: 'Telefonnummer finden',
     githubProfileLinkLabel: 'GitHub-Profil von Jonas Greim',
-    helperText:
-      'Die Suche startet automatisch und berücksichtigt keine Groß- und Kleinschreibung.',
+    helperText: 'Groß- und Kleinschreibung wird nicht berücksichtigt.',
     homeLabel: 'FindCall – zur Startseite',
     languageLabel: 'Sprache',
     linkedInProfileLinkLabel: 'LinkedIn-Profil von Jonas Greim',
@@ -98,7 +97,7 @@ export const translations: Record<Locale, Translations> = {
     german: 'German',
     heading: 'Find a phone number',
     githubProfileLinkLabel: 'Jonas Greim’s GitHub profile',
-    helperText: 'Search starts automatically and is not case-sensitive.',
+    helperText: 'Search is not case-sensitive.',
     homeLabel: 'FindCall – back to home',
     languageLabel: 'Language',
     linkedInProfileLinkLabel: 'Jonas Greim’s LinkedIn profile',

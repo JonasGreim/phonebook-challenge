@@ -60,3 +60,5 @@
   subtitle, balanced spacing, and responsive header height.
 - Kept the FindCall wordmark visible on narrow screens while retaining a hidden mobile subtitle.
 - Scaled the FindCall mark, wordmark, subtitle, and header spacing further at large breakpoints.
+- Simplified translated search helper text and increased its responsive readability.
+- Reduced search helper-text prominence with concise translations and consistent secondary styling.

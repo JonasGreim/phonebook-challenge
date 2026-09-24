@@ -85,6 +85,15 @@ export default function App() {
                   }
                   value={search.input}
                   slotProps={{
+                    formHelperText: {
+                      sx: {
+                        color: 'text.secondary',
+                        fontSize: '0.8125rem',
+                        fontWeight: 400,
+                        lineHeight: 1.5,
+                        mt: 1,
+                      },
+                    },
                     input: {
                       startAdornment: (
                         <InputAdornment position="start">
