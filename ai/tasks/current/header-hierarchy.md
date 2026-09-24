@@ -1,26 +1,23 @@
-# Current task: Improve the project README with screenshots
+# Current task: Document the pull-request deployment workflow
 
 ## Goal
 
-Present FindCall as a finished deployed coding-challenge project with a concise English README,
-safe screenshots, accurate local commands, and deployment guidance.
+Document the normal feature-branch and pull-request deployment workflow accurately in the English
+README.
 
 ## Scope and acceptance checks
 
-- Replace the outdated README with a product-oriented English overview.
-- Document the live Render demo, cold-start behavior, local setup, quality checks, deployment, and
-  project structure.
-- Use the existing logo asset and screenshots that do not expose contact data.
-- Keep all phonebook data server-only and do not commit source contact values into documentation.
+- Describe feature branch creation, pull-request checks, merge to `main`, and CI-gated Render
+  deployment.
+- Link to the public `render.yaml` file and retain the separate frontend/backend service model.
+- Keep the Render free-tier cold-start note.
 
 ## Status and next step
 
-Implemented: README now documents the live demo, bilingual search features, GraphQL architecture,
-responsive Hero, local development, CI-gated Render deployment, and project structure. The
-provided screenshots are explicitly identified as showing sample/demo contact data, and the
-desktop, mobile, and filtered-results screenshots are embedded.
+Implemented: the README deployment section now documents feature branches, pull requests against
+`main`, GitHub Actions checks, merging after successful checks, and Render deployment after the
+new `main` commit passes CI.
 
-Verification: `npm run check` and `git diff --check` passed before this documentation-only
-screenshot selection update. The original screenshots were visually inspected, and local
-command/configuration references match `package.json`, `.github/workflows/quality.yml`, and
-`render.yaml`. GitHub-rendered README verification remains pending until the changes are pushed.
+Verification: `npm run check` and `git diff --check` are pending. The documented sequence matches
+`.github/workflows/quality.yml` (`pull_request` and `push` triggers) and `render.yaml` (`main`
+branch with `checksPass` deployment).

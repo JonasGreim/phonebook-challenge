@@ -103,12 +103,18 @@ and Vite production build.
 
 ## Deployment
 
-1. Push changes to `main`.
-2. GitHub Actions runs `npm ci` and `npm run check`.
-3. Render deploys the frontend and GraphQL backend after CI checks pass.
+1. Create a feature branch for your changes.
+2. Push the branch and open a pull request against `main`.
+3. GitHub Actions runs the configured quality checks for the pull request.
+4. Merge the pull request after the checks pass.
+5. Render detects the new `main` commit and deploys the frontend and GraphQL backend after the CI
+   checks pass.
 
-The deployment is defined in [`render.yaml`](render.yaml). The two Render services are deployed
-separately, and the free-tier backend cold-start note applies to the live demo.
+The deployment is defined in
+[`render.yaml`](https://github.com/JonasGreim/phonebook-challenge/blob/main/render.yaml). The
+frontend and backend are deployed as separate Render services. Because the backend uses Render's
+free tier, the first request after inactivity may take up to approximately one minute while the
+service wakes up.
 
 ## Project structure
 

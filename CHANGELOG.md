@@ -83,3 +83,4 @@
 - Added static Open Graph and Twitter link-preview metadata with the public FindCall illustration.
 - Replaced the README with a concise English product overview, safe Hero screenshots, local setup,
   quality checks, deployment guidance, and project structure.
+- Documented the normal feature-branch and pull-request workflow for CI-gated Render deployment.
