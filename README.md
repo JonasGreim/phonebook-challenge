@@ -1,154 +1,123 @@
-# FindCall — Phonebook Coding Challenge
+# FindCall
 
-FindCall is a small, accessible phonebook search application. A React client queries an Apollo
-GraphQL server at runtime; the server validates and keeps the provided
-`server/data/telefonbuch.json` data in memory. The project intentionally keeps the source data
-unchanged.
+[![Quality checks](https://github.com/JonasGreim/phonebook-challenge/actions/workflows/quality.yml/badge.svg)](https://github.com/JonasGreim/phonebook-challenge/actions/workflows/quality.yml)
 
-## Contents
+<p align="center">
+  <img src="src/assets/findcall-mark.svg" alt="FindCall logo" width="96" />
+</p>
 
-- [Features](#features)
-- [Tech stack and prerequisites](#tech-stack-and-prerequisites)
-- [Install and run](#install-and-run)
-- [Quality checks](#quality-checks)
-- [Architecture and behavior](#architecture-and-behavior)
-- [Render deployment](#render-deployment)
-- [Documentation and AI-assisted workflow](#documentation-and-ai-assisted-workflow)
-- [Known limitations](#known-limitations)
-- [Screenshot](#screenshot)
+FindCall is a bilingual German/English phonebook search website. Search by contact name,
+review paginated results, and copy a phone number with accessible feedback.
+
+**[Open the live demo](https://findcall.onrender.com/)**
+
+## Live demo
+
+FindCall is deployed on Render's free tier as two separate services: a static frontend and a
+GraphQL backend. The backend may sleep after inactivity, so the first request can take up to
+approximately one minute while it wakes up. Subsequent requests run normally.
+
+## Screenshots
+
+The phonebook and the contact details shown in these screenshots are sample/demo data for this
+coding challenge. The screenshots show the complete product experience, including directory and
+search results:
+
+![FindCall desktop directory](docs/images/landing_page_big_screen.png)
+
+*Desktop directory view with the responsive Hero, bilingual switch, and paginated contacts.*
+
+![FindCall mobile directory](docs/images/landing_page_small_screen.png)
+
+*Compact mobile directory view with the same search experience and responsive result rows.*
+
+![FindCall search results](docs/images/results_page.png)
+
+*Filtered search with a matching contact, result count, page-size selector, and pagination.*
 
 ## Features
 
-- Case-insensitive substring search by name with a 280 ms debounce.
-- German and English UI, including accessible labels, status messages, and errors. The chosen
-  language is stored locally and updates the document language and title.
-- Server-side pagination after complete search and deterministic sorting: 10 results per page
-  by default, with 10, 25, and 50 available.
-- Stable contact IDs ensure that contacts with identical names remain separate records.
-- Responsive, keyboard-accessible pagination and page-size selection.
-- An accessible copy action for each phone number, with translated success and failure feedback.
-  It preserves the number's original text, including leading zeroes and formatting.
-- One shared SVG mark for the page logo and generated favicon; the logo subtitle follows the
-  selected German or English locale.
-- Runtime validation of the JSON data and GraphQL responses, plus strict TypeScript.
+- German and English interface with persisted language selection.
+- Case-insensitive, name-based phonebook search through GraphQL.
+- Alphabetically sorted initial directory view and filtered search results.
+- Server-side pagination with 10, 25, or 50 results per page.
+- Copy-to-clipboard actions with translated success and failure feedback.
+- Responsive full-width Hero with desktop, tablet, and mobile compositions.
+- Keyboard-accessible controls, labels, focus states, and pagination.
+- Loading, delayed-service, error, and no-results states.
 
-## Tech stack and prerequisites
+## Technology
 
-- React 19, Vite, Material UI, and TypeScript.
-- Apollo Server 5 and GraphQL.
-- Vitest, Testing Library, ESLint, and Prettier.
-- Node.js 22.22.2 or later and npm 10 or later. The exact Node version is recorded in
-  [`.nvmrc`](.nvmrc).
+- React
+- TypeScript
+- Material UI
+- GraphQL and Apollo Server
+- Vite
+- Node.js
+- GitHub Actions
+- Render
 
-## Install and run
+## Local setup
 
-Install dependencies from the committed lockfile:
+Requires Node.js 22.22.2 or later and npm 10 or later.
+
+Install dependencies:
 
 ```bash
 npm ci
 ```
 
-### Development
-
-Run the Vite client and GraphQL server together with file watching:
+For the simplest local development setup, run the frontend and GraphQL server together:
 
 ```bash
 npm run dev
 ```
 
-The client is available at `http://localhost:5173`; the GraphQL server listens on
+The frontend is available at `http://localhost:5173`; the GraphQL server listens on
 `http://localhost:4000`.
 
-For separate terminals, use `npm run dev:client` and `npm run dev:server`.
-
-### Regenerate the favicon
-
-The page logo and favicon use `src/assets/findcall-mark.svg` as their single geometry source.
-After editing that source, regenerate the derived favicon explicitly:
+To run the services separately, start the server in one terminal:
 
 ```bash
-npm run generate:favicon
+npm run start:server
 ```
 
-`npm run dev`, `npm run dev:client`, and `npm run build` regenerate it automatically. Do not edit
-`public/favicon.svg` manually. Use `npm run generate:favicon:check` to confirm it matches the
-source.
-
-### Tests and production build
+Then run the Vite client in a second terminal:
 
 ```bash
-npm test
-npm run build
+npm run dev:client
+```
+
+In development, the client uses its existing `VITE_GRAPHQL_URL` fallback to connect to
+`http://localhost:4000/`. No second local configuration mechanism is required. Production
+deployments provide `VITE_GRAPHQL_URL` as the public backend URL at build time.
+
+## Quality checks
+
+```bash
 npm run check
 ```
 
-`npm run check` is the full automated chain: TypeScript typecheck, lint, formatting check, tests,
-and the Vite production build. GitHub Actions runs the same command after `npm ci`. Local and
-remote results must be recorded separately.
+This runs the configured TypeScript typecheck, ESLint, Prettier formatting check, Vitest suite,
+and Vite production build.
 
-`npm run build` creates static client assets in `dist/`. `npm run start:server` starts only the
-GraphQL server; it does not serve `dist/`. Hosting the built client and deploying the two
-services are deliberately outside this challenge.
+## Deployment
 
-## Architecture and behavior
+1. Push changes to `main`.
+2. GitHub Actions runs `npm ci` and `npm run check`.
+3. Render deploys the frontend and GraphQL backend after CI checks pass.
 
-The Vite client never ships the phonebook file. At server startup, Apollo loads and validates
-`server/data/telefonbuch.json`, assigns a stable `contact-<index>` ID to each entry, and keeps the
-validated records in memory. For a non-empty search, it filters the complete phonebook, sorts by
-name and then ID, and returns the requested page with totals.
+The deployment is defined in [`render.yaml`](render.yaml). The two Render services are deployed
+separately, and the free-tier backend cold-start note applies to the live demo.
 
-An empty or whitespace-only input does not issue a search and shows no results. Phone numbers
-are displayed and copied as their original strings; they are not searched. The copy action uses
-the browser Clipboard API and reports success only after `writeText` resolves. Browsers can deny
-or omit that API, particularly outside a secure context; in that case the number remains visible
-for manual selection.
+## Project structure
 
-For design, API, and behavioral detail, see [the architecture](docs/architecture.md),
-[requirements](docs/requirements.md), [UI/UX notes](docs/ui-ux.md), and
-[technical decisions](docs/decisions.md).
+- [`src/`](src/) – React frontend, components, hooks, translations, and tests.
+- [`server/`](server/) – Apollo GraphQL backend and server-side data loading.
+- [`docs/`](docs/) – requirements, architecture, UI/UX documentation, and screenshots.
+- [`.github/`](.github/) – GitHub Actions quality workflow.
+- [`render.yaml`](render.yaml) – Render Blueprint configuration.
 
-## Render deployment
-
-[`render.yaml`](render.yaml) prepares two free Render services from `main`: a Vite static site
-and a Node.js GraphQL web service. Both use Render's `checksPass` auto-deploy trigger, so the
-existing GitHub Actions quality workflow must pass before deployment.
-
-During Blueprint setup, provide the Static Site's `VITE_GRAPHQL_URL` as the HTTPS URL assigned to
-the deployed backend. This public build-time value is intentionally not hardcoded: production has
-no localhost fallback. In the Render Dashboard, confirm `main` and **After CI Checks Pass** for
-both services. No deploy hook or repository credential is required.
-
-The free backend sleeps after 15 minutes without inbound traffic and can take about a minute to
-start for the next request. After three seconds, FindCall explains this neutrally in the selected
-language. It sends no keep-alive requests. The user confirmed deployment and validation; deployment
-URLs were not recorded in the repository.
-
-## Documentation and AI-assisted workflow
-
-[AGENTS.md](AGENTS.md) defines repository working rules: preserve original data and user changes,
-use the configured checks, document verification truthfully, and keep project-maintained
-documentation in English while the UI remains German/English.
-
-The [`docs/`](docs/) directory records requirements, architecture, UI/UX choices, and decisions.
-[`ai/tasks/`](ai/tasks/) contains concise active, backlog, and completed task handovers. AI was
-explicitly permitted for this challenge; those files make the scope, checks, and human-confirmed
-results reviewable.
-
-## Known limitations
-
-- There is no authentication, database, or search index. The free Render deployment is suitable
-  for a challenge/demo; its backend can sleep after inactivity and deployment URLs are intentionally
-  not stored in the repository.
-- The phonebook is a small, immutable in-memory data set; larger or mutable data needs a different
-  persistence and search strategy.
-- Clipboard support depends on the browser and context. Automated mocks cover its behavior, but a
-  real browser copy, denied/unavailable access, and keyboard check remains to be performed for
-  the current refactored state.
-- The last confirmed production build emitted Vite's chunk-size warning for a JavaScript chunk of
-  about 509 kB (about 160 kB gzip). This is an optimization opportunity—such as reviewing code
-  splitting—rather than a reason to raise the warning threshold in this documentation task.
-
-## Screenshot
-
-Add a manually created application screenshot at `docs/assets/findcall-screenshot.png` when it is
-available. No image link is included yet so the README does not reference a missing file.
+The phonebook source remains server-only in `server/data/telefonbuch.json`; it is never imported
+by the client. The included contact records are sample data and are not intended as real
+production directory information.

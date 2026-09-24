@@ -81,3 +81,5 @@
 - Added the alphabetically sorted first directory page on initial load and after clearing search,
   reusing the existing GraphQL pagination and result-card controls.
 - Added static Open Graph and Twitter link-preview metadata with the public FindCall illustration.
+- Replaced the README with a concise English product overview, safe Hero screenshots, local setup,
+  quality checks, deployment guidance, and project structure.
