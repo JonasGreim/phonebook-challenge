@@ -10,6 +10,8 @@
 
 <p align="center">Accessible bilingual phonebook search for finding contact phone numbers.</p>
 
+<p align="center">Built as a frontend coding challenge with a React client and GraphQL backend.</p>
+
 <p align="center">
   <strong><a href="https://findcall.onrender.com/">Open the live demo</a></strong>
 </p>
@@ -104,6 +106,8 @@ npm run check
 This runs the configured TypeScript typecheck, ESLint, Prettier formatting check, Vitest suite,
 and Vite production build.
 
+The project includes component and integration tests with Vitest and React Testing Library.
+
 ## Deployment
 
 1. Create a feature branch for your changes.
@@ -115,18 +119,36 @@ and Vite production build.
 
 The deployment is defined in
 [`render.yaml`](https://github.com/JonasGreim/phonebook-challenge/blob/main/render.yaml). The
-frontend and backend are deployed as separate Render services. Because the backend uses Render's
-free tier, the first request after inactivity may take up to approximately one minute while the
-service wakes up.
+frontend and backend are deployed as separate Render services. See [Live demo](#live-demo) for
+the free-tier cold-start behaviour.
 
 ## Project structure
 
-- [`src/`](src/) – React frontend, components, hooks, translations, and tests.
-- [`server/`](server/) – Apollo GraphQL backend and server-side data loading.
+- [`src/`](src/) – React frontend.
+- [`server/`](server/) – GraphQL backend.
+- [`ai/`](ai/) – implementation task records.
 - [`docs/`](docs/) – requirements, architecture, UI/UX documentation, and screenshots.
-- [`.github/`](.github/) – GitHub Actions quality workflow.
-- [`render.yaml`](render.yaml) – Render Blueprint configuration.
 
-The phonebook source remains server-only in `server/data/telefonbuch.json`; it is never imported
+The phonebook source remains server-only in [`server/data/telefonbuch.json`](server/data/telefonbuch.json); it is never imported
 by the client. The included contact records are sample data and are not intended as real
 production directory information.
+
+## AI-assisted development
+
+AI assistance supported planning, implementation, review, and documentation. Repository guidance,
+design decisions, task records, and completed changes are documented in [AGENTS.md](AGENTS.md),
+[docs/](docs/), [ai/tasks/](ai/tasks/), and [CHANGELOG.md](CHANGELOG.md); configured quality
+checks validate changes.
+
+## Possible next steps
+
+These ideas are outside the coding-challenge scope:
+
+- Authenticated admin contact management.
+- Persisted dark mode with system-preference support.
+- Separate first-name and last-name filters with an optional contact-detail view.
+- Persistent storage, indexed queries, and scalable backend infrastructure for a larger phonebook.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).

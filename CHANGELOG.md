@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Added the MIT License and focused README guidance for challenge context, testing, deployment,
+  AI-assisted development, compact project structure, and explicitly out-of-scope next steps.
 - Standardized server technical error messages and phonebook test descriptions in English while
   preserving localized frontend messages and synthetic German normalization data.
 - Refined the README brand header with a compact centered favicon beside the FindCall heading,
