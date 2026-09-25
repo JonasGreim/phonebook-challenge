@@ -1,28 +1,23 @@
-# Current task: Refine the README brand header
+# Current task: Standardize server errors and tests in English
 
 ## Goal
 
-Replace the oversized, isolated README logo presentation with a compact centered FindCall brand
-header that remains clear in GitHub light and dark modes.
+Replace German technical error messages and German test descriptions in the server code with
+English equivalents while preserving localized frontend user-facing messages.
 
 ## Scope and acceptance checks
 
-- Use the existing generated `public/favicon.svg` at approximately 72 px wide.
-- Center the icon to the left of the FindCall heading, followed by the existing quality-check badge
-  and short English description.
-- Keep the live-demo link centered directly below the short description and retain all remaining
-  README content.
-- Keep the badge tied to the repository quality workflow and do not alter logo geometry or favicon
-  generation.
+- Translate all seven technical runtime errors in `server/phonebook.ts`.
+- Translate server test suite and test-case descriptions and update expected error assertions.
+- Preserve search, pagination, stable IDs, duplicate-name handling, accented-character cases, and
+  all localized frontend messages.
 
 ## Status and next step
 
-Implemented: the README now uses a compact centered favicon to the left of the FindCall heading,
-followed by the workflow badge, description, and centered live-demo link while retaining the
-remaining content.
+Implemented: server technical errors and test descriptions are now English; synthetic German data
+remains only in the accented-character normalization test.
 
 Verification: `npm run check` passed (typecheck, lint, formatting, 34 tests, and production build);
-`git diff --check` passed; `public/favicon.svg` remains unchanged and its white bubble, dark-blue
-magnifier, blue handset, and green signal arcs provide contrast on both light and dark backgrounds.
-The README uses root-relative favicon and repository workflow URLs that resolve on GitHub. A
-published GitHub preview of these unpushed changes is not available in this workspace.
+`git diff --check` passed. The only German text remaining in `server/` is the intentional
+`Müller`/`müller` synthetic data used by the umlaut normalization test. Frontend localization,
+GraphQL error codes, phonebook data, search behavior, and pagination behavior were unchanged.

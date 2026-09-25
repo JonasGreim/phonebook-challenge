@@ -45,19 +45,18 @@ export async function loadPhonebook(filePath: PathLike): Promise<Contact[]> {
   } catch (error: unknown) {
     const message =
       error instanceof Error ? error.message : 'Unknown read error';
-    throw new Error(
-      `Telefonbuchdatei konnte nicht gelesen werden: ${message}`,
-      { cause: error },
-    );
+    throw new Error(`Failed to read phonebook file: ${message}`, {
+      cause: error,
+    });
   }
 
   if (!Array.isArray(parsed)) {
-    throw new Error('Telefonbuchdatei muss ein Array enthalten.');
+    throw new Error('Phonebook file must contain an array.');
   }
 
   return parsed.map((entry, index) => {
     if (!isPhonebookEntry(entry)) {
-      throw new Error(`Ungültiger Telefonbucheintrag an Position ${index}.`);
+      throw new Error(`Invalid phonebook entry at index ${index}.`);
     }
 
     return { id: `contact-${index}`, name: entry.name, phone: entry.phone };
@@ -68,7 +67,7 @@ export function normalizeQuery(query: string): string {
   const normalized = query.trim();
   if (normalized.length > MAX_QUERY_LENGTH) {
     throw new RangeError(
-      `Die Suchanfrage darf höchstens ${MAX_QUERY_LENGTH} Zeichen enthalten.`,
+      `Search query must not exceed ${MAX_QUERY_LENGTH} characters.`,
     );
   }
 
@@ -93,11 +92,11 @@ function filterContacts(
 
 function validatePagination(page: number, pageSize: number): void {
   if (!Number.isInteger(page) || page < 1) {
-    throw new RangeError('Die Seitennummer muss mindestens 1 sein.');
+    throw new RangeError('Page number must be at least 1.');
   }
 
   if (!PAGE_SIZES.some((allowedSize) => allowedSize === pageSize)) {
-    throw new RangeError('Die Seitengröße muss 10, 25 oder 50 sein.');
+    throw new RangeError('Page size must be 10, 25, or 50.');
   }
 }
 
@@ -148,7 +147,7 @@ export function searchPhonebookPage(
   const totalPages = Math.ceil(totalCount / pageSize);
 
   if (totalCount > 0 && page > totalPages) {
-    throw new RangeError('Die angeforderte Seite existiert nicht.');
+    throw new RangeError('Requested page does not exist.');
   }
 
   const startIndex = (page - 1) * pageSize;

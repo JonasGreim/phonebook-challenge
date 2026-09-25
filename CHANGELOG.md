@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Standardized server technical error messages and phonebook test descriptions in English while
+  preserving localized frontend messages and synthetic German normalization data.
 - Refined the README brand header with a compact centered favicon beside the FindCall heading,
   quality-check badge, and short English description.
 - Centered the README live-demo link below the compact brand header description.

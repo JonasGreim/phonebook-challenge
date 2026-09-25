@@ -15,8 +15,8 @@ const syntheticContacts: Contact[] = [
   { id: 'contact-3', name: 'Müller Test', phone: '0001' },
 ];
 
-describe('Telefonbuchdaten', () => {
-  it('lädt die bereitgestellte Datei und ergänzt nur serverseitige IDs', async () => {
+describe('Phonebook data', () => {
+  it('loads the provided file and adds only server-side IDs', async () => {
     const contacts = await loadPhonebook(
       path.resolve('server/data/telefonbuch.json'),
     );
@@ -31,34 +31,34 @@ describe('Telefonbuchdaten', () => {
   });
 });
 
-describe('Suche', () => {
-  it('findet Teilstrings ohne Beachtung der Groß- und Kleinschreibung', () => {
+describe('Search', () => {
+  it('finds substrings case-insensitively', () => {
     expect(searchPhonebook(syntheticContacts, 'NNA')).toEqual(
       syntheticContacts.slice(0, 3),
     );
   });
 
-  it('entfernt äußere Leerzeichen und bewahrt gleiche Namen als getrennte Treffer', () => {
+  it('trims outer whitespace and keeps duplicate names as separate matches', () => {
     const results = searchPhonebook(syntheticContacts, '  anna muster  ');
 
     expect(results).toEqual([syntheticContacts[0], syntheticContacts[2]]);
     expect(results.map((contact) => contact.phone)).toEqual(['0123', '0789']);
   });
 
-  it('liefert bei einer leeren Anfrage keine Treffer', () => {
+  it('returns no matches for an empty query', () => {
     expect(searchPhonebook(syntheticContacts, '   ')).toEqual([]);
   });
 
-  it('gleicht Umlaute nicht mit Umschreibungen gleich', () => {
+  it('does not equate umlauts with transliterations', () => {
     expect(searchPhonebook(syntheticContacts, 'mueller')).toEqual([]);
     expect(searchPhonebook(syntheticContacts, 'müller')).toEqual([
       syntheticContacts[3],
     ]);
   });
 
-  it('begrenzt überlange Anfragen', () => {
+  it('rejects queries that exceed the maximum length', () => {
     expect(() => normalizeQuery('a'.repeat(101))).toThrow(
-      'höchstens 100 Zeichen',
+      'must not exceed 100 characters',
     );
   });
 });
@@ -140,13 +140,13 @@ describe('Pagination', () => {
     });
     expect(() =>
       searchPhonebookPage(paginatedContacts, 'example', 0, 10),
-    ).toThrow('mindestens 1');
+    ).toThrow('must be at least 1');
     expect(() =>
       searchPhonebookPage(paginatedContacts, 'example', 1, 20),
-    ).toThrow('10, 25 oder 50');
+    ).toThrow('10, 25, or 50');
     expect(() =>
       searchPhonebookPage(paginatedContacts, 'example', 4, 10),
-    ).toThrow('existiert nicht');
+    ).toThrow('Requested page does not exist');
   });
 });
 
